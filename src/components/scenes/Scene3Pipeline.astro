@@ -9,10 +9,12 @@ import { experience } from '../../data/experience.js';
 
   <!-- Desktop: viewport dipin, track meluncur horizontal. Mobile: stack vertikal. -->
   <div class="pipeline-viewport" data-pipeline-viewport>
-    <div class="playhead" aria-hidden="true" data-playhead><span>now</span></div>
     <ol class="pipeline-track" data-pipeline-track>
       {experience.map((s, i) => (
-        <li class="stage card" data-stage data-index={i}>
+        <li class:list={['stage', 'card', i === experience.length - 1 && 'is-current']} data-stage data-index={i}>
+          {i === experience.length - 1 && (
+            <span class="now-marker" aria-hidden="true"><span class="now-label">now</span></span>
+          )}
           <div class="stage-top">
             <span class="stage-dot" aria-hidden="true"></span>
             <span class="stage-phase">{s.phase}</span>
@@ -36,10 +38,15 @@ import { experience } from '../../data/experience.js';
   .pipeline-head { margin-bottom: 30px; }
   .pipeline-viewport { position: relative; }
   .pipeline-track {
-    list-style: none; display: flex; gap: 20px; padding-inline: 24px;
+    list-style: none; display: flex; gap: 20px;
+    /* Padding agar kartu PERTAMA dan TERAKHIR bisa tepat di tengah viewport.
+       160px = separuh lebar kartu (.stage flex-basis 320px).
+       Kalau lebar kartu diubah, sesuaikan angka ini. */
+    padding-inline: calc(50% - 160px);
     will-change: transform;
   }
   .stage {
+    position: relative;
     flex: 0 0 320px; scroll-snap-align: center;
     display: flex; flex-direction: column; gap: 6px;
   }
@@ -53,15 +60,19 @@ import { experience } from '../../data/experience.js';
   .stage-org { color: var(--text-secondary); font-size: 14.5px; }
   .stage-impact { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
 
-  .playhead {
-    position: absolute; top: -10px; bottom: -10px; left: 50%; width: 0;
+  /* Penanda "now" menempel pada kartu jabatan TERAKHIR (bergerak bersama track),
+     bukan garis diam di tengah layar — supaya "now" benar-benar berarti posisi
+     Anda saat ini, bukan sekadar titik baca. */
+  .now-marker {
+    position: absolute; top: -12px; bottom: -12px; left: 50%; width: 0;
     border-left: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent);
     z-index: 2; pointer-events: none;
   }
-  .playhead span {
+  .now-label {
     position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
     font-family: var(--font-mono); font-size: 11px; color: var(--accent);
   }
+  .stage.is-current { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 
   .pipeline-rail { height: 4px; border-radius: 2px; background: var(--border); margin-top: 34px; overflow: hidden; }
   .pipeline-rail > span { display: block; height: 100%; width: 0%; background: var(--accent); }
@@ -74,7 +85,7 @@ import { experience } from '../../data/experience.js';
       transform: none !important; will-change: auto;
     }
     .stage { flex: 1 1 auto; }
-    .playhead { display: none; }
+    .now-marker { display: none; }
     .pipeline-rail { display: none; }
   }
 </style>

@@ -132,7 +132,38 @@ function initPipeline() {
 
   ScrollTrigger.matchMedia({
     '(min-width: 861px)': function () {
-      const distance = () => track.scrollWidth - section.clientWidth + 48;
+      const viewport = section.querySelector('[data-pipeline-viewport]');
+
+      // Jarak geser = posisi tengah kartu TERAKHIR relatif titik tengah viewport.
+      // Dihitung dari offsetLeft (tidak terpengaruh transform), bukan scrollWidth
+      // — supaya kartu terakhir (+ penanda "now"-nya) berhenti tepat di tengah.
+      const distance = () => {
+        const last = stages[stages.length - 1];
+        if (!last || !viewport) return 0;
+        return Math.max(0, last.offsetLeft + last.offsetWidth / 2 - viewport.clientWidth / 2);
+      };
+
+      // Titik tengah viewport = posisi baca (tak terlihat). Kartu terdekat
+      // dengannya = aktif; yang sudah lewat = passed.
+      const markActive = () => {
+        if (!viewport) return;
+        const box = viewport.getBoundingClientRect();
+        const mid = box.left + viewport.clientWidth / 2;
+        let best = null;
+        let bestDist = Infinity;
+        stages.forEach((s) => {
+          const r = s.getBoundingClientRect();
+          const d = Math.abs(r.left + r.width / 2 - mid);
+          if (d < bestDist) { bestDist = d; best = s; }
+        });
+        stages.forEach((s) => {
+          const r = s.getBoundingClientRect();
+          const center = r.left + r.width / 2;
+          s.classList.toggle('is-active', s === best);
+          s.classList.toggle('is-passed', s !== best && center < mid);
+        });
+      };
+
       const tween = gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
@@ -145,18 +176,13 @@ function initPipeline() {
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
+        onRefresh: markActive,
         onUpdate: (self) => {
           if (progress) progress.style.width = (self.progress * 100).toFixed(1) + '%';
-          // playhead di tengah viewport: tandai stage aktif/passed
-          const mid = window.innerWidth / 2;
-          stages.forEach((s) => {
-            const r = s.getBoundingClientRect();
-            const center = r.left + r.width / 2;
-            s.classList.toggle('is-active', center <= mid + r.width / 2 && center >= mid - r.width / 2);
-            s.classList.toggle('is-passed', center < mid - r.width / 2);
-          });
+          markActive();
         },
       });
+      markActive(); // status awal: kartu pertama aktif sebelum scroll
     },
     '(max-width: 860px)': function () {
       revealStages();
