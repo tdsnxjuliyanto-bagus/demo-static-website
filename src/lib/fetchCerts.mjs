@@ -11,11 +11,12 @@ import {
   credlyUser,
   credlyRules,
   credlyOverrides,
+  credlyFeatured,
+  VISIBLE_LIMITS,
   accreditationsFallback,
   certsFallback,
   msLearnCerts,
   appliedSkills,
-  ACCREDITATION_LIMIT,
 } from '../data/certs.js';
 
 const TIMEOUT_MS = 6000;
@@ -85,6 +86,24 @@ async function fetchCredly() {
   }
 }
 
+// Bagi satu kelompok menjadi {shown, extra}.
+//  - Bila credlyFeatured diisi: badge Credly di daftar itu -> shown,
+//    sisanya -> extra. Item Microsoft Learn selalu shown.
+//  - Bila kosong: pakai VISIBLE_LIMITS (Infinity = semua tampil).
+function split(items, type) {
+  const featured = new Set((credlyFeatured || []).filter(Boolean));
+
+  if (featured.size) {
+    const shown = items.filter((c) => c.source !== 'Credly' || featured.has(c.name));
+    const extra = items.filter((c) => c.source === 'Credly' && !featured.has(c.name));
+    return { shown, extra, total: items.length };
+  }
+
+  const limit = (VISIBLE_LIMITS || {})[type];
+  if (!Number.isFinite(limit)) return { shown: items, extra: [], total: items.length };
+  return { shown: items.slice(0, limit), extra: items.slice(limit), total: items.length };
+}
+
 // Mengembalikan tiga kelompok siap render.
 export async function getCertifications() {
   const live = await fetchCredly();
@@ -97,11 +116,10 @@ export async function getCertifications() {
 
   const ofType = (t) => clean(credly.filter((c) => c.type === t));
 
-  // 1) Akreditasi: Credly saja, hanya N terbaru.
-  const accAll = ofType('accreditation').sort(byNewest);
-  const accreditations = accAll.slice(0, ACCREDITATION_LIMIT);
+  // 1) Akreditasi: Credly saja.
+  const accreditations = ofType('accreditation').sort(byNewest);
 
-  // 2) Sertifikasi: Credly + Microsoft Learn, semua.
+  // 2) Sertifikasi: Credly + Microsoft Learn.
   const certifications = [
     ...ofType('certification'),
     ...clean(msLearnCerts).map((c) => ({ ...c, source: 'Microsoft Learn', type: 'certification' })),
@@ -114,10 +132,9 @@ export async function getCertifications() {
   ].sort(byNewest);
 
   return {
-    accreditations,
-    accreditationsTotal: accAll.length,
-    certifications,
-    appliedSkills: applied,
+    accreditations: split(accreditations, 'accreditation'),
+    certifications: split(certifications, 'certification'),
+    appliedSkills: split(applied, 'applied-skill'),
     stale,
   };
 }

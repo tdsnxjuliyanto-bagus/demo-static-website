@@ -1,12 +1,7 @@
 ---
 import { profile } from '../../data/profile.js';
-const {
-  accreditations = [],
-  accreditationsTotal = 0,
-  certifications = [],
-  appliedSkills = [],
-  stale = false,
-} = Astro.props;
+const { certs = {} } = Astro.props;
+const stale = certs.stale;
 
 const hasTranscript = profile.msLearnTranscript && !profile.msLearnTranscript.startsWith('[');
 
@@ -41,27 +36,18 @@ function meta(c) {
   return { text: parts.join(' · '), expired };
 }
 
-// Fallback ikon: 2 karakter pertama nama (mis. "AZ-305: ..." -> "AZ").
-const initials = (name = '') =>
-  (name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '••').toUpperCase();
+const prep = (list = []) => list.map((c) => ({ ...c, meta: meta(c) }));
 
-const href = (c) => (filled(c.url) ? c.url : null);
-
-const prep = (list) => list.map((c) => ({ ...c, meta: meta(c) }));
+const g = (key, id, title) => {
+  const src = certs[key] || { shown: [], extra: [], total: 0 };
+  return { id, title, shown: prep(src.shown), extra: prep(src.extra), total: src.total || 0 };
+};
 
 const groups = [
-  {
-    id: 'accreditations',
-    title: 'Accreditations',
-    note:
-      accreditationsTotal > accreditations.length
-        ? `${accreditations.length} terbaru dari ${accreditationsTotal}`
-        : '',
-    items: prep(accreditations),
-  },
-  { id: 'certifications', title: 'Certifications', note: '', items: prep(certifications) },
-  { id: 'applied-skills', title: 'Applied Skills', note: '', items: prep(appliedSkills) },
-].filter((g) => g.items.length);
+  g('accreditations', 'accreditations', 'Accreditations'),
+  g('certifications', 'certifications', 'Certifications'),
+  g('appliedSkills', 'applied-skills', 'Applied Skills'),
+].filter((x) => x.shown.length || x.extra.length);
 ---
 <section id="certs" class="scene" data-scene="certs">
   <div class="blueprint-bg" aria-hidden="true"></div>
@@ -77,20 +63,21 @@ const groups = [
         // isi username Credly di src/data/certs.js, atau daftar Microsoft Learn, untuk menampilkan kredensial.
       </p>
     ) : (
-      groups.map((g) => (
-        <section class="cert-group" aria-labelledby={`cg-${g.id}`}>
+      groups.map((grp) => (
+        <section class="cert-group" data-cert-group aria-labelledby={`cg-${grp.id}`}>
           <div class="cert-group-head reveal">
-            <h3 class="cert-group-title" id={`cg-${g.id}`}>{g.title}</h3>
-            <span class="cert-count">{g.items.length}</span>
-            {g.note && <span class="cert-note">{g.note}</span>}
+            <h3 class="cert-group-title" id={`cg-${grp.id}`}>{grp.title}</h3>
+            <span class="cert-count">{grp.total}</span>
           </div>
-          <div class="cert-grid">
-            {g.items.map((c) => {
-              const link = href(c);
+
+          <div class="cert-grid" id={`cgrid-${grp.id}`}>
+            {[...grp.shown, ...grp.extra].map((c, i) => {
+              const link = filled(c.url) ? c.url : null;
               const Tag = link ? 'a' : 'div';
+              const isExtra = i >= grp.shown.length;
               return (
                 <Tag
-                  class="cert card reveal"
+                  class:list={['cert', 'card', 'reveal', isExtra && 'cert-extra']}
                   href={link}
                   target={link ? '_blank' : null}
                   rel={link ? 'noopener noreferrer' : null}
@@ -98,7 +85,17 @@ const groups = [
                   {filled(c.image) ? (
                     <img class="cert-img" src={c.image} alt="" width="48" height="48" loading="lazy" decoding="async" />
                   ) : (
-                    <span class="cert-badge" aria-hidden="true">{initials(c.name)}</span>
+                    <span class="cert-badge" aria-hidden="true">
+                      {c.type === 'accreditation' && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.2 14.3 7 22l5-3 5 3-1.2-7.7"/></svg>
+                      )}
+                      {c.type === 'certification' && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M8 7h8M8 11h5"/><path d="m9 16-1 5 4-2 4 2-1-5"/></svg>
+                      )}
+                      {c.type === 'applied-skill' && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg>
+                      )}
+                    </span>
                   )}
                   <div class="cert-body">
                     <span class="cert-name">{c.name}</span>
@@ -112,6 +109,20 @@ const groups = [
               );
             })}
           </div>
+
+          {grp.extra.length > 0 && (
+            <button
+              type="button"
+              class="cert-more"
+              data-cert-toggle
+              data-count={grp.extra.length}
+              aria-expanded="false"
+              aria-controls={`cgrid-${grp.id}`}
+            >
+              <span data-cert-toggle-text>Show all {grp.total} badges</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+          )}
         </section>
       ))
     )}
@@ -141,16 +152,22 @@ const groups = [
     font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
     border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px;
   }
-  .cert-note { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); margin-left: auto; }
 
   .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .cert { display: flex; align-items: center; gap: 14px; }
+
+  /* Badge tambahan: disembunyikan sampai tombol ditekan.
+     Tanpa JS (html.no-js) semuanya tetap tampil -> konten tak pernah terkunci. */
+  .cert-extra { display: none; }
+  .cert-group.is-open .cert-extra { display: flex; }
+  html.no-js .cert-extra { display: flex; }
+
   .cert-img { border-radius: 8px; flex: 0 0 auto; width: 48px; height: 48px; object-fit: contain; }
   .cert-badge {
     flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px;
     display: grid; place-items: center; background: var(--accent-soft); color: var(--accent);
-    font-family: var(--font-mono); font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
   }
+  .cert-badge svg { width: 22px; height: 22px; }
   .cert-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
   .cert-name { font-weight: 500; font-size: 15px; }
   .cert-meta { font-size: 13px; color: var(--text-secondary); }
@@ -158,6 +175,17 @@ const groups = [
   .cert-date.is-expired { color: #b45309; }
   :root[data-theme='dark'] .cert-date.is-expired { color: #fbbf24; }
   .cert-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); align-self: flex-start; }
+
+  .cert-more {
+    display: inline-flex; align-items: center; gap: 7px; margin-top: 14px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--accent);
+    background: transparent; border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm); padding: 8px 14px;
+    transition: border-color 0.2s var(--ease);
+  }
+  .cert-more:hover { border-color: var(--accent); }
+  .cert-more .chev { width: 15px; height: 15px; transition: transform 0.25s var(--ease); }
+  .cert-group.is-open .cert-more .chev { transform: rotate(180deg); }
 
   .cert-actions { display: flex; align-items: center; gap: 14px; margin-top: 30px; }
   .cert-stale { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }

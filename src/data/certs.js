@@ -2,9 +2,12 @@
 //  CERTIFICATIONS  —  Scene 5 "Credentials Minted"
 //
 //  Tiga kelompok:
-//    1) Akreditasi   -> sumber Credly. Hanya 5 TERBARU yang tampil.
-//    2) Sertifikasi  -> sumber Credly + Microsoft Learn. Tampil SEMUA.
-//    3) Applied Skills -> sumber Microsoft Learn. Tampil semua.
+//    1) Akreditasi     -> sumber Credly.
+//    2) Sertifikasi    -> sumber Credly + Microsoft Learn.
+//    3) Applied Skills -> sumber Microsoft Learn.
+//
+//  Badge Credly yang tampil dikontrol lewat credlyFeatured; sisanya masuk
+//  ke balik tombol "Show all" per kelompok.
 //
 //  Badge Credly di-fetch saat BUILD (src/lib/fetchCerts.mjs), lalu
 //  diklasifikasikan otomatis lewat credlyRules di bawah.
@@ -14,8 +17,30 @@
 // Kosongkan '' untuk mematikan fetch Credly.
 export const credlyUser = 'bagus-juliyanto';
 
-// Berapa akreditasi TERBARU yang ditampilkan (sisanya disembunyikan).
-export const ACCREDITATION_LIMIT = 5;
+// ---------------------------------------------------------------------------
+//  BADGE CREDLY MANA YANG TAMPIL BY DEFAULT
+//
+//  Isi credlyFeatured dengan NAMA BADGE PERSIS seperti di Credly.
+//  -> Hanya badge di daftar ini yang tampil langsung.
+//  -> Sisanya disembunyikan di balik tombol "Show all" per kelompok.
+//  Kosongkan ([]) untuk memakai VISIBLE_LIMITS di bawah sebagai gantinya.
+//
+//  Sertifikat Microsoft Learn (msLearnCerts / appliedSkills) SELALU tampil —
+//  daftarnya sudah Anda kurasi manual, jadi tidak perlu disaring lagi.
+// ---------------------------------------------------------------------------
+export const credlyFeatured = [
+  'Professional Cloud Architect Certification',
+  'AWS Certified Cloud Practitioner',
+  'AWS Certified Solutions Architect - Associate'
+  // 'Azure Infrastructure Accreditation',
+];
+
+// Dipakai HANYA bila credlyFeatured kosong. Infinity = tampilkan semua.
+export const VISIBLE_LIMITS = {
+  accreditation: 5,           // 5 terbaru
+  certification: Infinity,    // semua
+  'applied-skill': Infinity,  // semua
+};
 
 // ---------------------------------------------------------------------------
 //  Klasifikasi badge Credly berdasarkan NAMA badge.
@@ -75,6 +100,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Azure Solutions Architect Expert', // EDIT
     issuer: 'Microsoft',
+    image: '/certs/microsoft-certified-azure-solutions-architect-expert-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-05-26',                            // EDIT
     expiresOn: '2027-05-27',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/7EBEF9896EC2B816?sharingId=1A0384713C1DC829',
@@ -82,13 +108,39 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: DevOps Engineer Expert',
     issuer: 'Microsoft',
+    image: '/certs/microsoft-certified-devops-engineer-expert-badge.svg',
     earnedOn: '2026-05-26',
     expiresOn: '2027-05-27',
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/BAC3BAA3CF4A0314?sharingId=1A0384713C1DC829',
   },
   {
+    name: 'Microsoft Certified: Azure Administrator Associate', // EDIT
+    issuer: 'Microsoft',
+    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    earnedOn: '2026-03-23',                            // EDIT
+    expiresOn: '2027-03-24',                           // EDIT (atau '' bila tidak expire)
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/AD06EE2CDD1F5F98?sharingId=1A0384713C1DC829',
+  },
+  {
+    name: 'Microsoft Certified: Azure Developer Associate', // EDIT
+    issuer: 'Microsoft',
+    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    earnedOn: '2025-05-8',                            // EDIT
+    expiresOn: '2027-05-9',                           // EDIT (atau '' bila tidak expire)
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/28B9F435191213AA?sharingId=1A0384713C1DC829',
+  },
+  {
+    name: 'Microsoft Certified: Windows Server Hybrid Administrator Associate', // EDIT
+    issuer: 'Microsoft',
+    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    earnedOn: '2025-11-4',                            // EDIT
+    expiresOn: '2027-11-5',                           // EDIT (atau '' bila tidak expire)
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/9D6BC2797433BC1C?sharingId=1A0384713C1DC829',
+  },
+  {
      name: 'Microsoft Certified: Azure Fundamentals',
      issuer: 'Microsoft',
+     image: '/certs/microsoft-certified-fundamentals-badge.svg',
      earnedOn: '2025-01-18',
      expiresOn: '',            // -> "No expiration"
      url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/864F0F9BC5A22009?sharingId=1A0384713C1DC829',
@@ -103,7 +155,7 @@ export const appliedSkills = [
   {
     name: 'Microsoft Applied Skills: Configure secure access to your workloads using Azure networking', // EDIT
     issuer: 'Microsoft Learn',
-    image: 'https://learn.microsoft.com/en-us/media/profile/zero-state-applied-skills.svg?branch=main',                    // EDIT (opsional): '/certs/nama.png'
+    image: '/certs/zero-state-applied-skills.svg',                    // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-07-2',     // EDIT
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/E557D17203B0C79D?sharingId=1A0384713C1DC829',     // EDIT
   },

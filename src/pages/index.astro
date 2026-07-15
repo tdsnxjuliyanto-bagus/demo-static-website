@@ -22,13 +22,7 @@ const certs = await getCertifications();
     <Scene2Expertise />
     <Scene3Pipeline />
     <Scene4Projects />
-    <Scene5Certs
-      accreditations={certs.accreditations}
-      accreditationsTotal={certs.accreditationsTotal}
-      certifications={certs.certifications}
-      appliedSkills={certs.appliedSkills}
-      stale={certs.stale}
-    />
+    <Scene5Certs certs={certs} />
     <Scene6Console />
   </main>
   <Footer />

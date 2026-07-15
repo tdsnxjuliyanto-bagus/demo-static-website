@@ -224,7 +224,31 @@ function initFilters() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 7. Scene 6: contact form -> POST /api/contact (fallback mailto)            */
+/* 7. Scene 5: buka/tutup badge tambahan per kelompok                         */
+/* -------------------------------------------------------------------------- */
+function initCertToggles() {
+  document.querySelectorAll('[data-cert-group]').forEach((group) => {
+    const btn = group.querySelector('[data-cert-toggle]');
+    if (!btn) return;
+    const label = btn.querySelector('[data-cert-toggle-text]');
+    const total = group.querySelectorAll('.cert').length;
+
+    btn.addEventListener('click', () => {
+      const open = group.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(open));
+      if (label) label.textContent = open ? 'Show less' : `Show all ${total} badges`;
+
+      // Kartu tambahan baru muncul -> jalankan reveal & hitung ulang pin.
+      if (open) {
+        group.querySelectorAll('.cert-extra.reveal').forEach((el) => el.classList.add('is-visible'));
+      }
+      ScrollTrigger.refresh();
+    });
+  });
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. Scene 6: contact form -> POST /api/contact (fallback mailto)            */
 /* -------------------------------------------------------------------------- */
 function initContact() {
   const form = document.querySelector('[data-contact-form]');
@@ -283,6 +307,7 @@ function boot() {
   initExpertise();
   initPipeline();
   initFilters();
+  initCertToggles();
   initContact();
   ScrollTrigger.refresh();
 }
