@@ -35,6 +35,12 @@ export const credlyFeatured = [
   // 'Azure Infrastructure Accreditation',
 ];
 
+export const COLLAPSE_MIN = {
+  accreditation: 4,
+  certification: 4,
+  'applied-skill': 4,
+};
+
 // Dipakai HANYA bila credlyFeatured kosong. Infinity = tampilkan semua.
 export const VISIBLE_LIMITS = {
   accreditation: 5,           // 5 terbaru
@@ -100,7 +106,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Azure Solutions Architect Expert', // EDIT
     issuer: 'Microsoft',
-    image: '/certs/microsoft-certified-azure-solutions-architect-expert-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/microsoft-certified-azure-solutions-architect-expert-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-05-26',                            // EDIT
     expiresOn: '2027-05-27',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/7EBEF9896EC2B816?sharingId=1A0384713C1DC829',
@@ -108,7 +114,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: DevOps Engineer Expert',
     issuer: 'Microsoft',
-    image: '/certs/microsoft-certified-devops-engineer-expert-badge.svg',
+    image: '/assets/microsoft-certified-devops-engineer-expert-badge.svg',
     earnedOn: '2026-05-26',
     expiresOn: '2027-05-27',
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/BAC3BAA3CF4A0314?sharingId=1A0384713C1DC829',
@@ -116,7 +122,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Azure Administrator Associate', // EDIT
     issuer: 'Microsoft',
-    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-03-23',                            // EDIT
     expiresOn: '2027-03-24',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/AD06EE2CDD1F5F98?sharingId=1A0384713C1DC829',
@@ -124,7 +130,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Azure Developer Associate', // EDIT
     issuer: 'Microsoft',
-    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2025-05-8',                            // EDIT
     expiresOn: '2027-05-9',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/28B9F435191213AA?sharingId=1A0384713C1DC829',
@@ -132,7 +138,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Windows Server Hybrid Administrator Associate', // EDIT
     issuer: 'Microsoft',
-    image: '/certs/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/microsoft-certified-associate-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2025-11-4',                            // EDIT
     expiresOn: '2027-11-5',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/9D6BC2797433BC1C?sharingId=1A0384713C1DC829',
@@ -140,7 +146,7 @@ export const msLearnCerts = [
   {
      name: 'Microsoft Certified: Azure Fundamentals',
      issuer: 'Microsoft',
-     image: '/certs/microsoft-certified-fundamentals-badge.svg',
+     image: '/assets/microsoft-certified-fundamentals-badge.svg',
      earnedOn: '2025-01-18',
      expiresOn: '',            // -> "No expiration"
      url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/864F0F9BC5A22009?sharingId=1A0384713C1DC829',
@@ -155,7 +161,7 @@ export const appliedSkills = [
   {
     name: 'Microsoft Applied Skills: Configure secure access to your workloads using Azure networking', // EDIT
     issuer: 'Microsoft Learn',
-    image: '/certs/zero-state-applied-skills.svg',                    // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/zero-state-applied-skills.svg',                    // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-07-2',     // EDIT
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/E557D17203B0C79D?sharingId=1A0384713C1DC829',     // EDIT
   },

@@ -25,6 +25,18 @@ const TIMEOUT_MS = 6000;
 const filled = (v) => typeof v === 'string' && v.trim() !== '' && !v.startsWith('[');
 const clean = (arr) => (arr || []).filter((c) => c && filled(c.name));
 
+// Normalisasi nama badge untuk pencocokan.
+// Nama di Credly kerap memakai karakter tipografis (en-dash "–", em-dash "—",
+// non-breaking space) yang mirip tapi TIDAK sama dengan hyphen/spasi biasa.
+// Tanpa ini, 'AWS ... – Associate' tidak akan cocok dengan '... - Associate'.
+const norm = (s) =>
+  String(s || '')
+    .replace(/[\u2010-\u2015\u2212]/g, '-') // segala jenis dash -> "-"
+    .replace(/[\u00A0\u2007\u202F]/g, ' ')  // non-breaking space -> spasi
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+
 // Urut terbaru dulu; yang tanpa tanggal ditaruh paling akhir.
 const byNewest = (a, b) => {
   const x = filled(a.earnedOn) ? a.earnedOn : '';
@@ -35,8 +47,14 @@ const byNewest = (a, b) => {
   return y.localeCompare(x);
 };
 
+// Override manual dicocokkan dengan nama ternormalisasi juga.
+const overrideMap = new Map(
+  Object.entries(credlyOverrides || {}).map(([k, v]) => [norm(k), v])
+);
+
 function classify(name) {
-  if (credlyOverrides && credlyOverrides[name]) return credlyOverrides[name];
+  const hit = overrideMap.get(norm(name));
+  if (hit) return hit;
   for (const re of credlyRules.appliedSkill || []) if (re.test(name)) return 'applied-skill';
   for (const re of credlyRules.accreditation || []) if (re.test(name)) return 'accreditation';
   return 'certification';
@@ -91,12 +109,17 @@ async function fetchCredly() {
 //    sisanya -> extra. Item Microsoft Learn selalu shown.
 //  - Bila kosong: pakai VISIBLE_LIMITS (Infinity = semua tampil).
 function split(items, type) {
-  const featured = new Set((credlyFeatured || []).filter(Boolean));
+  const featured = new Set(
+    (credlyFeatured || []).filter(Boolean).map(norm)
+  );
 
   if (featured.size) {
-    const shown = items.filter((c) => c.source !== 'Credly' || featured.has(c.name));
-    const extra = items.filter((c) => c.source === 'Credly' && !featured.has(c.name));
-    return { shown, extra, total: items.length };
+    const isShown = (c) => c.source !== 'Credly' || featured.has(norm(c.name));
+    return {
+      shown: items.filter(isShown),
+      extra: items.filter((c) => !isShown(c)),
+      total: items.length,
+    };
   }
 
   const limit = (VISIBLE_LIMITS || {})[type];
@@ -113,6 +136,15 @@ export async function getCertifications() {
     ...clean(accreditationsFallback).map((c) => ({ ...c, type: 'accreditation', source: 'Credly' })),
     ...clean(certsFallback).map((c) => ({ ...c, type: 'certification', source: 'Credly' })),
   ];
+
+  // Peringatan saat build bila ada nama di credlyFeatured yang tidak cocok
+  // dengan badge mana pun — biasanya karena salah ketik atau beda karakter.
+  const names = new Set(credly.map((c) => norm(c.name)));
+  (credlyFeatured || []).filter(Boolean).forEach((f) => {
+    if (!names.has(norm(f))) {
+      console.warn(`[fetchCerts] credlyFeatured tidak cocok dengan badge mana pun: "${f}"`);
+    }
+  });
 
   const ofType = (t) => clean(credly.filter((c) => c.type === t));
 
