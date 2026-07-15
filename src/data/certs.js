@@ -12,7 +12,7 @@
 
 // EDIT: username Credly Anda (bagian setelah credly.com/users/).
 // Kosongkan '' untuk mematikan fetch Credly.
-export const credlyUser = '[USERNAME_CREDLY]';
+export const credlyUser = 'bagus-juliyanto';
 
 // Berapa akreditasi TERBARU yang ditampilkan (sisanya disembunyikan).
 export const ACCREDITATION_LIMIT = 5;
@@ -52,12 +52,12 @@ export const accreditationsFallback = [
 
 export const certsFallback = [
   {
-    name: '[Nama Sertifikat Credly 1]',
-    issuer: 'Microsoft',
-    image: '',                                   // URL badge, atau '/certs/xxx.png'
-    url: 'https://www.credly.com/badges/[ID]',
-    earnedOn: '[YYYY-MM-DD]',
-    expiresOn: '[YYYY-MM-DD]',
+    name: 'Professional Cloud Architect Certification',
+    issuer: 'Google Cloud',
+    image: 'https://images.credly.com/size/680x680/images/71c579e0-51fd-4247-b493-d2fa8167157a/image.png',                                   // URL badge, atau '/certs/xxx.png'
+    url: 'https://www.credly.com/badges/be61f2c1-56ef-4160-a428-3aa16be533e0',
+    earnedOn: '2025-12-29',
+    expiresOn: '2027-12-29',
   },
 ];
 
@@ -73,20 +73,25 @@ export const certsFallback = [
 // ---------------------------------------------------------------------------
 export const msLearnCerts = [
   {
-    name: '[AZ-305: Azure Solutions Architect Expert]', // EDIT
-    issuer: 'Microsoft Learn',
-    image: '',                                           // EDIT (opsional)
-    earnedOn: '[YYYY-MM-DD]',                            // EDIT
-    expiresOn: '[YYYY-MM-DD]',                           // EDIT (atau '')
-    url: '[LINK_VERIFIKASI]',                            // EDIT
+    name: 'Microsoft Certified: Azure Solutions Architect Expert', // EDIT
+    issuer: 'Microsoft',
+    earnedOn: '2026-05-26',                            // EDIT
+    expiresOn: '2027-05-27',                           // EDIT (atau '' bila tidak expire)
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/7EBEF9896EC2B816?sharingId=1A0384713C1DC829',
   },
   {
-    name: '[AZ-400: DevOps Engineer Expert]',
-    issuer: 'Microsoft Learn',
-    image: '',
-    earnedOn: '[YYYY-MM-DD]',
-    expiresOn: '[YYYY-MM-DD]',
+    name: 'Microsoft Certified: DevOps Engineer Expert',
+    issuer: 'Microsoft',
+    earnedOn: '2026-05-26',
+    expiresOn: '2027-05-27',
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/BAC3BAA3CF4A0314?sharingId=1A0384713C1DC829',
+  },
+  {
+     name: 'Microsoft Certified: Azure Fundamentals',
+     issuer: 'Microsoft',
+     earnedOn: '2025-01-18',
+     expiresOn: '',            // -> "No expiration"
+     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/864F0F9BC5A22009?sharingId=1A0384713C1DC829',
   },
 ];
 
@@ -96,10 +101,10 @@ export const msLearnCerts = [
 // ---------------------------------------------------------------------------
 export const appliedSkills = [
   {
-    name: '[Configure secure access to your workloads using Azure networking]', // EDIT
+    name: 'Microsoft Applied Skills: Configure secure access to your workloads using Azure networking', // EDIT
     issuer: 'Microsoft Learn',
-    image: '',                    // EDIT (opsional): '/certs/nama.png'
-    earnedOn: '[YYYY-MM-DD]',     // EDIT
-    url: '[LINK_VERIFIKASI]',     // EDIT
+    image: 'https://learn.microsoft.com/en-us/media/profile/zero-state-applied-skills.svg?branch=main',                    // EDIT (opsional): '/certs/nama.png'
+    earnedOn: '2026-07-2',     // EDIT
+    url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/E557D17203B0C79D?sharingId=1A0384713C1DC829',     // EDIT
   },
 ];
