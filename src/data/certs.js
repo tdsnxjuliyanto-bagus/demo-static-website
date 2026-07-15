@@ -49,24 +49,6 @@ export const VISIBLE_LIMITS = {
 };
 
 // ---------------------------------------------------------------------------
-//  Klasifikasi badge Credly berdasarkan NAMA badge.
-//  Dicek berurutan: appliedSkill -> accreditation -> sisanya 'certification'.
-//  EDIT: tambah pola bila penamaan badge Anda berbeda.
-// ---------------------------------------------------------------------------
-export const credlyRules = {
-  appliedSkill: [/applied skill/i],
-  accreditation: [/accreditation/i, /accredited/i],
-};
-
-// Override manual bila pola di atas salah menebak.
-// Kunci = nama badge PERSIS seperti di Credly.
-// Nilai = 'accreditation' | 'certification' | 'applied-skill'
-export const credlyOverrides = {
-  // 'Azure Infrastructure Accreditation': 'accreditation',
-  // 'Contoh Badge': 'certification',
-};
-
-// ---------------------------------------------------------------------------
 //  Fallback statis (dipakai HANYA bila fetch Credly gagal saat build).
 //  EDIT: isi beberapa yang penting sebagai cadangan.
 // ---------------------------------------------------------------------------

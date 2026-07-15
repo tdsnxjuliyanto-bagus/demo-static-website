@@ -9,10 +9,9 @@
 
 import {
   credlyUser,
-  credlyRules,
-  credlyOverrides,
   credlyFeatured,
   VISIBLE_LIMITS,
+  COLLAPSE_MIN,
   accreditationsFallback,
   certsFallback,
   msLearnCerts,
@@ -47,18 +46,12 @@ const byNewest = (a, b) => {
   return y.localeCompare(x);
 };
 
-// Override manual dicocokkan dengan nama ternormalisasi juga.
-const overrideMap = new Map(
-  Object.entries(credlyOverrides || {}).map(([k, v]) => [norm(k), v])
-);
+// Set nama badge (ternormalisasi) yang Anda tetapkan sebagai SERTIFIKASI.
+const featuredSet = new Set((credlyFeatured || []).filter(Boolean).map(norm));
 
-function classify(name) {
-  const hit = overrideMap.get(norm(name));
-  if (hit) return hit;
-  for (const re of credlyRules.appliedSkill || []) if (re.test(name)) return 'applied-skill';
-  for (const re of credlyRules.accreditation || []) if (re.test(name)) return 'accreditation';
-  return 'certification';
-}
+// Aturan tunggal: ada di credlyFeatured -> certification; selain itu -> accreditation.
+// Applied Skills tidak diambil dari Credly (dikurasi manual di certs.js).
+const classify = (name) => (featuredSet.has(norm(name)) ? 'certification' : 'accreditation');
 
 const isoDate = (v) => (typeof v === 'string' ? v.slice(0, 10) : '');
 
@@ -105,26 +98,18 @@ async function fetchCredly() {
 }
 
 // Bagi satu kelompok menjadi {shown, extra}.
-//  - Bila credlyFeatured diisi: badge Credly di daftar itu -> shown,
-//    sisanya -> extra. Item Microsoft Learn selalu shown.
-//  - Bila kosong: pakai VISIBLE_LIMITS (Infinity = semua tampil).
+//  - Jumlah < COLLAPSE_MIN[type] -> semua tampil, tak ada tombol.
+//  - Selain itu -> tampilkan VISIBLE_LIMITS[type] item pertama (sudah terurut
+//    terbaru dulu); sisanya di balik tombol. Infinity = semua tampil.
 function split(items, type) {
-  const featured = new Set(
-    (credlyFeatured || []).filter(Boolean).map(norm)
-  );
+  const total = items.length;
 
-  if (featured.size) {
-    const isShown = (c) => c.source !== 'Credly' || featured.has(norm(c.name));
-    return {
-      shown: items.filter(isShown),
-      extra: items.filter((c) => !isShown(c)),
-      total: items.length,
-    };
-  }
+  const minToCollapse = (COLLAPSE_MIN || {})[type] ?? 0;
+  if (total < minToCollapse) return { shown: items, extra: [], total };
 
   const limit = (VISIBLE_LIMITS || {})[type];
-  if (!Number.isFinite(limit)) return { shown: items, extra: [], total: items.length };
-  return { shown: items.slice(0, limit), extra: items.slice(limit), total: items.length };
+  if (!Number.isFinite(limit)) return { shown: items, extra: [], total };
+  return { shown: items.slice(0, limit), extra: items.slice(limit), total };
 }
 
 // Mengembalikan tiga kelompok siap render.
@@ -138,7 +123,8 @@ export async function getCertifications() {
   ];
 
   // Peringatan saat build bila ada nama di credlyFeatured yang tidak cocok
-  // dengan badge mana pun — biasanya karena salah ketik atau beda karakter.
+  // dengan badge mana pun — biasanya salah ketik. Tanpa ini, badge yang
+  // dimaksud diam-diam nyasar ke Accreditations.
   const names = new Set(credly.map((c) => norm(c.name)));
   (credlyFeatured || []).filter(Boolean).forEach((f) => {
     if (!names.has(norm(f))) {
