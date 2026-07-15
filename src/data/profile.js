@@ -21,12 +21,12 @@ export const profile = {
   // --- Kontak ----------------------------------------------------------------
   email: 'bagus.juliyanto@outlook.com',                      // EDIT: mis. "you@domain.com"
   phone: '',              // EDIT (opsional; kosongkan '' untuk sembunyikan)
-  linkedin: 'https://www.linkedin.com/in/bagusjuliyanto/',       // EDIT: bagian setelah linkedin.com/in/
+  linkedin: 'bagusjuliyanto',       // EDIT: bagian setelah linkedin.com/in/
   github: 'bagusj06',           // EDIT: username GitHub
 
   // --- SEO / domain ----------------------------------------------------------
   domain: 'https://www.bagusjuliyanto.cloud',     // EDIT: domain final (tanpa trailing slash)
-  ogImage: '/assets/og-cover.jpg',       // EDIT: taruh gambar 1200x630 di public/assets/
+  ogImage: '/assets/b-cover.png',       // EDIT: taruh gambar 1200x630 di public/assets/
   cvFile: '/assets/CV-Bagus-Juliyanto.pdf',       // EDIT: taruh PDF CV di public/assets/
 
   // --- Verifikasi sertifikat via Microsoft Learn -----------------------------
