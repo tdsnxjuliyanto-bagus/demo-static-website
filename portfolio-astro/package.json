@@ -1,0 +1,17 @@
+{
+  "name": "cloud-architect-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "Static scrollytelling CV/portfolio (Astro + GSAP) for Azure Static Web Apps",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^4.15.0",
+    "gsap": "^3.13.0"
+  }
+}

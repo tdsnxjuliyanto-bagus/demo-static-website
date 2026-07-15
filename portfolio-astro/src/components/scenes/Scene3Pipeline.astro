@@ -1,0 +1,80 @@
+---
+import { experience } from '../../data/experience.js';
+---
+<section id="pipeline" class="scene pipeline-scene" data-scene="pipeline">
+  <div class="container pipeline-head">
+    <span class="eyebrow reveal">the pipeline</span>
+    <h2 class="scene-title reveal">A career, deployed in stages.</h2>
+  </div>
+
+  <!-- Desktop: viewport dipin, track meluncur horizontal. Mobile: stack vertikal. -->
+  <div class="pipeline-viewport" data-pipeline-viewport>
+    <div class="playhead" aria-hidden="true" data-playhead><span>now</span></div>
+    <ol class="pipeline-track" data-pipeline-track>
+      {experience.map((s, i) => (
+        <li class="stage card" data-stage data-index={i}>
+          <div class="stage-top">
+            <span class="stage-dot" aria-hidden="true"></span>
+            <span class="stage-phase">{s.phase}</span>
+            <span class="stage-period">{s.period}</span>
+          </div>
+          <h3 class="stage-title">{s.title}</h3>
+          <p class="stage-org">{s.org}</p>
+          <p class="stage-impact">{s.impact}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="container">
+    <div class="pipeline-rail" aria-hidden="true"><span data-pipeline-progress></span></div>
+  </div>
+</section>
+
+<style>
+  .pipeline-scene { overflow: hidden; }
+  .pipeline-head { margin-bottom: 30px; }
+  .pipeline-viewport { position: relative; }
+  .pipeline-track {
+    list-style: none; display: flex; gap: 20px; padding-inline: 24px;
+    will-change: transform;
+  }
+  .stage {
+    flex: 0 0 320px; scroll-snap-align: center;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stage-top { display: flex; align-items: center; gap: 10px; }
+  .stage-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); transition: background 0.4s var(--ease); }
+  .stage.is-passed .stage-dot { background: var(--success); }
+  .stage.is-active .stage-dot { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .stage-phase { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  .stage-period { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  .stage-title { font-size: 1.2rem; margin-top: 6px; }
+  .stage-org { color: var(--text-secondary); font-size: 14.5px; }
+  .stage-impact { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
+
+  .playhead {
+    position: absolute; top: -10px; bottom: -10px; left: 50%; width: 0;
+    border-left: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent);
+    z-index: 2; pointer-events: none;
+  }
+  .playhead span {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+  }
+
+  .pipeline-rail { height: 4px; border-radius: 2px; background: var(--border); margin-top: 34px; overflow: hidden; }
+  .pipeline-rail > span { display: block; height: 100%; width: 0%; background: var(--accent); }
+
+  /* Mobile: buang horizontal, jadi timeline vertikal */
+  @media (max-width: 860px) {
+    .pipeline-viewport { padding-inline: 0; }
+    .pipeline-track {
+      flex-direction: column; gap: 14px; padding-inline: 24px;
+      transform: none !important; will-change: auto;
+    }
+    .stage { flex: 1 1 auto; }
+    .playhead { display: none; }
+    .pipeline-rail { display: none; }
+  }
+</style>

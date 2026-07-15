@@ -1,0 +1,39 @@
+---
+import { profile, stats, services } from '../../data/profile.js';
+---
+<section id="about" class="scene" data-scene="about">
+  <div class="container">
+    <span class="eyebrow reveal">foundation</span>
+    <div class="about-grid">
+      <div>
+        <h2 class="scene-title reveal">The landing zone.</h2>
+        <p class="lead reveal" style="margin-top:18px">{profile.summary}</p>
+        <p class="reveal" style="margin-top:16px;color:var(--text-secondary)">
+          Based in {profile.location}. I turn technical complexity into measurable business outcomes across
+          cloud architecture, data platforms, security, and cost governance.
+        </p>
+        <div class="svc reveal">
+          {services.map((s) => <span class="pill">{s}</span>)}
+        </div>
+      </div>
+      <div class="stats">
+        {stats.map((s) => (
+          <div class="stat card reveal">
+            <span class="stat-val">{s.value}</span>
+            <span class="stat-label">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 44px; align-items: start; margin-top: 28px; }
+  .svc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .stat { display: flex; flex-direction: column; gap: 6px; }
+  .stat-val { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 13.5px; color: var(--text-secondary); }
+  @media (max-width: 820px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } }
+</style>

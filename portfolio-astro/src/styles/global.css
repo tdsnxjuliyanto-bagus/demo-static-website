@@ -1,0 +1,181 @@
+/* ==========================================================================
+   GLOBAL STYLES  —  "The Blueprint That Builds Itself"
+   Signature: blueprint grid + monospace CLI eyebrow labels.
+   Display: Plus Jakarta Sans · Body: Inter · Utility/mono: JetBrains Mono
+   ========================================================================== */
+
+/* --- Self-hosted fonts ---------------------------------------------------
+   EDIT: unduh file font (woff2) dan taruh di public/fonts/.
+   Font di-self-host agar CSP ketat (tanpa Google) + privasi. Lihat README.
+   Jika file belum ada, browser fallback ke system-ui secara otomatis.        */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/PlusJakartaSans-Variable.woff2') format('woff2');
+  font-weight: 200 800; font-display: swap; font-style: normal;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Variable.woff2') format('woff2');
+  font-weight: 100 900; font-display: swap; font-style: normal;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Variable.woff2') format('woff2');
+  font-weight: 400 700; font-display: swap; font-style: normal;
+}
+
+/* --- Design tokens -------------------------------------------------------- */
+:root {
+  --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Light theme (default) */
+  --bg: #f7f8fa;
+  --bg-elev: #ffffff;
+  --surface: #ffffff;
+  --border: #e3e7ee;
+  --border-strong: #cdd4df;
+  --text: #0f172a;
+  --text-secondary: #47536b;
+  --text-muted: #7a869c;
+  --accent: #2563eb;
+  --accent-soft: #e6effd;
+  --success: #16a34a;
+  --success-soft: #e7f6ec;
+  --blueprint-line: rgba(37, 99, 235, 0.06);
+
+  --maxw: 1120px;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme='dark'] {
+  --bg: #0b1120;
+  --bg-elev: #111a2e;
+  --surface: #131c30;
+  --border: #26324a;
+  --border-strong: #35425e;
+  --text: #eef2f9;
+  --text-secondary: #b3bed3;
+  --text-muted: #7e8aa3;
+  --accent: #3b82f6;
+  --accent-soft: #16233f;
+  --success: #34d399;
+  --success-soft: #133024;
+  --blueprint-line: rgba(59, 130, 246, 0.09);
+}
+
+/* --- Reset ---------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html.no-js { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+
+/* --- Layout helpers ------------------------------------------------------- */
+.container { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 24px; }
+.scene { position: relative; padding-block: clamp(72px, 12vh, 140px); }
+
+/* Monospace CLI eyebrow — the signature label device */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+  display: inline-block;
+}
+.eyebrow::before { content: '// '; opacity: 0.6; }
+
+.scene-title { font-size: clamp(1.9rem, 4.5vw, 3rem); max-width: 18ch; }
+.lead { color: var(--text-secondary); font-size: 1.1rem; max-width: 60ch; }
+
+/* --- Blueprint grid background ------------------------------------------- */
+.blueprint-bg {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 100%);
+}
+.scene > .container { position: relative; z-index: 1; }
+
+/* --- Cards ---------------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: border-color 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.card:hover { border-color: var(--border-strong); }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 12.5px;
+  padding: 5px 11px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text-secondary);
+  background: var(--bg-elev);
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 20px; border-radius: var(--radius-sm);
+  font-weight: 500; font-size: 15px; border: 1px solid transparent;
+  transition: transform 0.2s var(--ease), background 0.2s var(--ease);
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-ghost { background: transparent; border-color: var(--border-strong); color: var(--text); }
+.btn-ghost:hover { border-color: var(--accent); }
+
+/* --- Reveal animation base (JS toggles .is-visible) ---------------------- */
+.reveal { opacity: 0; transform: translateY(24px); }
+/* Jika JS mati, jangan sembunyikan konten (no-js dilepas oleh theme-init.js) */
+html.no-js .reveal { opacity: 1 !important; transform: none !important; }
+.is-visible .reveal, .reveal.is-visible { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+
+/* Progress rail (deploy 0->100%) */
+.deploy-rail {
+  position: fixed; left: 0; top: 0; height: 3px; width: 100%; z-index: 60;
+  background: transparent;
+}
+.deploy-rail > span { display: block; height: 100%; width: 0%; background: var(--accent); }
+
+/* --- Accessibility -------------------------------------------------------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.skip-link {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  background: var(--accent); color: #fff; padding: 10px 16px; border-radius: 8px;
+  transition: top 0.2s var(--ease);
+}
+.skip-link:focus { top: 12px; }
+
+/* --- Reduced motion: kill all pin/scrub, show static -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

@@ -1,0 +1,19 @@
+---
+import { profile } from '../data/profile.js';
+const year = new Date().getFullYear();
+---
+<footer class="foot">
+  <div class="container foot-inner">
+    <span class="foot-status"><span class="dot" aria-hidden="true"></span>all systems operational</span>
+    <span class="foot-copy">&copy; {year} {profile.fullName}. Built static + serverless on Azure.</span>
+    <a href="#top" class="foot-top">back to top &uarr;</a>
+  </div>
+</footer>
+<style>
+  .foot { border-top: 1px solid var(--border); padding-block: 26px; }
+  .foot-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 13.5px; color: var(--text-secondary); }
+  .foot-status { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12.5px; }
+  .foot-status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+  .foot-copy { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-muted); }
+  .foot-top { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
+</style>

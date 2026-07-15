@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Scene0Hero from '../components/scenes/Scene0Hero.astro';
+import Scene1About from '../components/scenes/Scene1About.astro';
+import Scene2Expertise from '../components/scenes/Scene2Expertise.astro';
+import Scene3Pipeline from '../components/scenes/Scene3Pipeline.astro';
+import Scene4Projects from '../components/scenes/Scene4Projects.astro';
+import Scene5Certs from '../components/scenes/Scene5Certs.astro';
+import Scene6Console from '../components/scenes/Scene6Console.astro';
+import { getCertifications } from '../lib/fetchCerts.mjs';
+
+// Build-time: tarik sertifikat (Credly + Microsoft Learn). Selalu graceful.
+const certs = await getCertifications();
+---
+<Base>
+  <Nav />
+  <main id="main">
+    <Scene0Hero />
+    <Scene1About />
+    <Scene2Expertise />
+    <Scene3Pipeline />
+    <Scene4Projects />
+    <Scene5Certs credly={certs.credly} msLearn={certs.msLearn} stale={certs.stale} />
+    <Scene6Console />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  import '../scripts/story.js';
+</script>

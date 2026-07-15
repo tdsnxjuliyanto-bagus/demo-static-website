@@ -1,0 +1,123 @@
+---
+import { profile } from '../../data/profile.js';
+const mailto = profile.email && !profile.email.startsWith('[') ? `mailto:${profile.email}` : '#';
+---
+<section id="console" class="scene" data-scene="console">
+  <div class="container">
+    <span class="eyebrow reveal">system ready</span>
+    <h2 class="scene-title reveal">Let's build something reliable.</h2>
+
+    <div class="console card reveal">
+      <div class="console-bar" aria-hidden="true">
+        <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+        <span class="console-name">console</span>
+        <span class="console-status"><span class="s-dot"></span>ready</span>
+      </div>
+
+      <div class="console-body">
+        <p class="prompt"><span class="caret">&gt;</span> system ready. leave a message, or query the architecture.</p>
+
+        <p class="path">~/contact</p>
+        <!-- Form asli & aksesibel; JS meng-upgrade ke POST /api/contact, fallback mailto -->
+        <form class="cform" data-contact-form action={mailto} method="post" novalidate>
+          <div class="row2">
+            <div class="field">
+              <label for="cf-name">Name</label>
+              <input id="cf-name" name="name" type="text" autocomplete="name" required maxlength="100" />
+            </div>
+            <div class="field">
+              <label for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" autocomplete="email" required maxlength="150" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="cf-subject">Subject</label>
+            <input id="cf-subject" name="subject" type="text" maxlength="150" />
+          </div>
+          <div class="field">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="4" required maxlength="3000"></textarea>
+          </div>
+          <!-- Honeypot: disembunyikan dari manusia; bot cenderung mengisinya -->
+          <div class="hp" aria-hidden="true">
+            <label for="cf-company">Company website</label>
+            <input id="cf-company" name="company_website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <div class="cform-foot">
+            <button type="submit" class="btn btn-primary console-send">$ send message</button>
+            <p class="cform-status" data-form-status role="status" aria-live="polite"></p>
+          </div>
+        </form>
+
+        <div class="console-divider"></div>
+
+        <!-- Ask my CV — diparkir sebagai Phase 2 -->
+        <div class="ask">
+          <div class="ask-head">
+            <span class="path">~/ask-my-cv</span>
+            <span class="phase2">Phase 2</span>
+          </div>
+          <div class="ask-chips">
+            <span class="ask-chip">Pengalaman Azure &amp; Fabric?</span>
+            <span class="ask-chip">Ringkas security work</span>
+            <span class="ask-chip">Available for consulting?</span>
+          </div>
+          <div class="ask-input"><span>&gt;</span> Ask my CV anything… (coming in Phase 2)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-alt reveal">
+      <a href={mailto} class="pill">{profile.email}</a>
+      {profile.linkedin && !profile.linkedin.startsWith('[') && (
+        <a class="pill" href={`https://www.linkedin.com/in/${profile.linkedin}`} target="_blank" rel="noopener noreferrer">in/{profile.linkedin}</a>
+      )}
+      {profile.github && !profile.github.startsWith('[') && (
+        <a class="pill" href={`https://github.com/${profile.github}`} target="_blank" rel="noopener noreferrer">gh/{profile.github}</a>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .console { padding: 0; overflow: hidden; margin-top: 30px; max-width: 760px; }
+  .console-bar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  .tl { width: 10px; height: 10px; border-radius: 50%; background: var(--border-strong); }
+  .console-name { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-left: 6px; }
+  .console-status { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--success); }
+  .s-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); }
+  .console-body { padding: 18px 20px 22px; }
+  .prompt { font-family: var(--font-mono); font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px; }
+  .caret { color: var(--accent); }
+  .path { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+
+  .cform .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12.5px; color: var(--text-secondary); }
+  .field input, .field textarea {
+    font-family: var(--font-body); font-size: 15px; color: var(--text);
+    background: var(--bg-elev); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); padding: 9px 12px; width: 100%; resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .cform-foot { display: flex; align-items: center; gap: 14px; margin-top: 6px; flex-wrap: wrap; }
+  .console-send { font-family: var(--font-mono); font-size: 14px; }
+  .cform-status { font-size: 13px; color: var(--text-secondary); }
+  .cform-status[data-state='error'] { color: #dc2626; }
+  .cform-status[data-state='ok'] { color: var(--success); }
+
+  .console-divider { height: 1px; background: var(--border); margin: 22px 0 18px; }
+  .ask-head { display: flex; align-items: center; gap: 10px; }
+  .phase2 { margin-left: auto; font-size: 11px; color: var(--text-secondary); border: 1px dashed var(--border-strong); border-radius: 999px; padding: 2px 9px; }
+  .ask-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; opacity: 0.55; }
+  .ask-chip { font-size: 12px; border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; color: var(--text-secondary); }
+  .ask-input {
+    display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px;
+    border: 1px dashed var(--border-strong); border-radius: var(--radius-sm);
+    color: var(--text-muted); font-size: 13.5px; opacity: 0.65;
+  }
+  .ask-input span { font-family: var(--font-mono); }
+  .contact-alt { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  @media (max-width: 560px) { .cform .row2 { grid-template-columns: 1fr; } }
+</style>

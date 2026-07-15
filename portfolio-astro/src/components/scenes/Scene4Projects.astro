@@ -1,0 +1,61 @@
+---
+import { projects, projectFilters } from '../../data/projects.js';
+---
+<section id="projects" class="scene" data-scene="projects">
+  <div class="container">
+    <span class="eyebrow reveal">services deployed</span>
+    <h2 class="scene-title reveal">Selected work.</h2>
+    <p class="lead reveal" style="margin-top:16px">
+      Case studies and demos — each one spun up like a service coming online.
+    </p>
+
+    <div class="filters reveal" role="group" aria-label="Filter projects" data-filters>
+      {projectFilters.map((f, i) => (
+        <button type="button" class={`filter-chip${i === 0 ? ' is-active' : ''}`} data-filter={f}>{f}</button>
+      ))}
+    </div>
+
+    <div class="proj-grid" data-proj-grid>
+      {projects.map((p) => (
+        <article class="proj card reveal" data-tag={p.tag}>
+          <div class="proj-head">
+            <span class="proj-status" aria-hidden="true"></span>
+            <span class="proj-tag">{p.tag}</span>
+          </div>
+          <h3 class="proj-title">{p.title}</h3>
+          <p class="proj-sum">{p.summary}</p>
+          <div class="proj-stack">
+            {p.stack.map((s) => <span class="mono-tag">{s}</span>)}
+          </div>
+          {p.link && (
+            <a class="proj-link" href={p.link} target="_blank" rel="noopener noreferrer">View details &rarr;</a>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 22px; }
+  .filter-chip {
+    font-family: var(--font-mono); font-size: 13px; padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--border-strong); background: transparent; color: var(--text-secondary);
+    transition: all 0.2s var(--ease);
+  }
+  .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+  .filter-chip.is-active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .proj { display: flex; flex-direction: column; gap: 8px; }
+  .proj[hidden] { display: none; }
+  .proj-head { display: flex; align-items: center; gap: 10px; }
+  .proj-status { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px var(--success-soft); }
+  .proj-tag { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  .proj-title { font-size: 1.15rem; }
+  .proj-sum { color: var(--text-secondary); font-size: 14.5px; flex: 1; }
+  .proj-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .mono-tag { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; }
+  .proj-link { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-top: 4px; }
+  @media (max-width: 900px) { .proj-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .proj-grid { grid-template-columns: 1fr; } }
+</style>

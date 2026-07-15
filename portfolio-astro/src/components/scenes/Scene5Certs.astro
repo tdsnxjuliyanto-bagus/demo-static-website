@@ -1,0 +1,70 @@
+---
+import { profile } from '../../data/profile.js';
+const { credly = [], msLearn = [], stale = false } = Astro.props;
+const hasTranscript = profile.msLearnTranscript && !profile.msLearnTranscript.startsWith('[');
+const all = [
+  ...credly.map((c) => ({ ...c, source: 'Credly' })),
+  ...msLearn.map((c) => ({ ...c, source: 'Microsoft Learn' })),
+];
+---
+<section id="certs" class="scene" data-scene="certs">
+  <div class="blueprint-bg" aria-hidden="true"></div>
+  <div class="container">
+    <span class="eyebrow reveal">credentials minted</span>
+    <h2 class="scene-title reveal">Verified certifications.</h2>
+    <p class="lead reveal" style="margin-top:16px">
+      Fetched at build time — each badge links to its verification page.
+    </p>
+
+    {all.length === 0 ? (
+      <p class="reveal" style="margin-top:24px;color:var(--text-muted);font-family:var(--font-mono);font-size:14px">
+        // isi username Credly di src/data/certs.js atau daftar Microsoft Learn untuk menampilkan sertifikat.
+      </p>
+    ) : (
+      <div class="cert-grid">
+        {all.map((c) => (
+          <a class="cert card reveal" href={c.url && !c.url.startsWith('[') ? c.url : '#'}
+             target={c.url && !c.url.startsWith('[') ? '_blank' : null}
+             rel="noopener noreferrer">
+            {c.image ? <img class="cert-img" src={c.image} alt="" width="56" height="56" loading="lazy" /> : <span class="cert-badge" aria-hidden="true">&#10003;</span>}
+            <div class="cert-body">
+              <span class="cert-name">{c.name}</span>
+              <span class="cert-meta">{c.issuer}{c.date ? ` · ${c.date}` : ''}</span>
+            </div>
+            <span class="cert-src">{c.source}</span>
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div class="cert-actions reveal">
+      {hasTranscript && (
+        <a class="btn btn-ghost" href={profile.msLearnTranscript} target="_blank" rel="noopener noreferrer">
+          View Microsoft Learn transcript
+        </a>
+      )}
+      {stale && (
+        <span class="cert-stale" title="Menampilkan daftar cadangan (fetch Credly gagal saat build).">
+          showing cached list
+        </span>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 34px; }
+  .cert { display: flex; align-items: center; gap: 14px; }
+  .cert-img { border-radius: 8px; flex: 0 0 auto; }
+  .cert-badge {
+    flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px;
+    display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 20px;
+  }
+  .cert-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+  .cert-name { font-weight: 500; font-size: 15px; }
+  .cert-meta { font-size: 13px; color: var(--text-secondary); }
+  .cert-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+  .cert-actions { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+  .cert-stale { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+  @media (max-width: 640px) { .cert-grid { grid-template-columns: 1fr; } }
+</style>

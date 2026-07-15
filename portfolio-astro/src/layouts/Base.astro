@@ -1,0 +1,62 @@
+---
+import '../styles/global.css';
+import { profile } from '../data/profile.js';
+
+const title = `${profile.fullName} — ${profile.role}`;
+const description = profile.summary;
+const canonical = profile.domain;
+const ogImage = new URL(profile.ogImage, profile.domain).toString();
+
+// JSON-LD Person untuk SEO / rich results
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.fullName,
+  jobTitle: profile.role,
+  description: profile.summary,
+  url: profile.domain,
+  email: profile.email && !profile.email.startsWith('[') ? `mailto:${profile.email}` : undefined,
+  sameAs: [
+    profile.linkedin && !profile.linkedin.startsWith('[') ? `https://www.linkedin.com/in/${profile.linkedin}` : null,
+    profile.github && !profile.github.startsWith('[') ? `https://github.com/${profile.github}` : null,
+  ].filter(Boolean),
+};
+---
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#2563eb" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <!-- Theme init: blocking, external (CSP-safe), runs before paint -->
+    <script is:inline src="/theme-init.js"></script>
+
+    <!-- JSON-LD (data block, tidak dieksekusi -> aman untuk CSP script-src) -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <div class="deploy-rail" aria-hidden="true"><span data-deploy-progress></span></div>
+    <slot />
+  </body>
+</html>

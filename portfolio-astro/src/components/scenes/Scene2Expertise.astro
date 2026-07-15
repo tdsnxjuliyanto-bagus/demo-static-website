@@ -1,0 +1,40 @@
+---
+import { expertise } from '../../data/expertise.js';
+---
+<section id="expertise" class="scene" data-scene="expertise">
+  <div class="blueprint-bg" aria-hidden="true"></div>
+  <div class="container">
+    <span class="eyebrow reveal">the stack forms</span>
+    <h2 class="scene-title reveal">Core expertise, connected.</h2>
+    <p class="lead reveal" style="margin-top:16px">
+      Each capability is a node in the same architecture — they reinforce one another.
+    </p>
+
+    <div class="nodes" data-expertise-grid>
+      {expertise.map((e) => (
+        <article class="node-card card reveal" data-node>
+          <span class="node-dot" aria-hidden="true"></span>
+          <h3 class="node-title">{e.title}</h3>
+          <ul class="node-skills">
+            {e.skills.map((s) => <li>{s}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .nodes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+  .node-card { position: relative; }
+  .node-dot { position: absolute; top: 20px; right: 20px; width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); transition: background 0.4s var(--ease); }
+  .node-card.is-active .node-dot { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .node-title { font-size: 1.15rem; font-family: var(--font-display); }
+  .node-skills { list-style: none; margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .node-skills li {
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
+  }
+  @media (max-width: 900px) { .nodes { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .nodes { grid-template-columns: 1fr; } }
+</style>
