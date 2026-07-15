@@ -2,10 +2,42 @@
 import { profile } from '../../data/profile.js';
 const { credly = [], msLearn = [], stale = false } = Astro.props;
 const hasTranscript = profile.msLearnTranscript && !profile.msLearnTranscript.startsWith('[');
+
+// Placeholder ('[...]') dan string kosong dianggap "tidak diisi".
+const filled = (v) => typeof v === 'string' && v.trim() !== '' && !v.startsWith('[');
+
+// 'YYYY-MM-DD' -> 'Mar 2025'. Kembalikan null bila tidak valid.
+const fmt = (v) => {
+  if (!filled(v)) return null;
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+};
+
+// Bangun baris meta: "Earned Mar 2025 · Expires Mar 2026" / "· No expiration".
+function meta(c) {
+  const parts = [];
+  const earned = fmt(c.earnedOn) || fmt(c.date); // c.date = kompat data lama
+  if (earned) parts.push(`Earned ${earned}`);
+
+  let expired = false;
+  if (filled(c.expiresOn)) {
+    const exp = new Date(c.expiresOn);
+    const expText = fmt(c.expiresOn);
+    if (expText) {
+      expired = !Number.isNaN(exp.getTime()) && exp.getTime() < Date.now();
+      parts.push(`${expired ? 'Expired' : 'Expires'} ${expText}`);
+    }
+  } else if (earned) {
+    parts.push('No expiration');
+  }
+  return { text: parts.join(' · '), expired };
+}
+
 const all = [
   ...credly.map((c) => ({ ...c, source: 'Credly' })),
   ...msLearn.map((c) => ({ ...c, source: 'Microsoft Learn' })),
-];
+].map((c) => ({ ...c, meta: meta(c) }));
 ---
 <section id="certs" class="scene" data-scene="certs">
   <div class="blueprint-bg" aria-hidden="true"></div>
@@ -29,7 +61,10 @@ const all = [
             {c.image ? <img class="cert-img" src={c.image} alt="" width="56" height="56" loading="lazy" /> : <span class="cert-badge" aria-hidden="true">&#10003;</span>}
             <div class="cert-body">
               <span class="cert-name">{c.name}</span>
-              <span class="cert-meta">{c.issuer}{c.date ? ` · ${c.date}` : ''}</span>
+              <span class="cert-meta">{c.issuer}</span>
+              {c.meta.text && (
+                <span class={`cert-date${c.meta.expired ? ' is-expired' : ''}`}>{c.meta.text}</span>
+              )}
             </div>
             <span class="cert-src">{c.source}</span>
           </a>
@@ -63,6 +98,9 @@ const all = [
   .cert-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
   .cert-name { font-weight: 500; font-size: 15px; }
   .cert-meta { font-size: 13px; color: var(--text-secondary); }
+  .cert-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); }
+  .cert-date.is-expired { color: #b45309; }
+  :root[data-theme='dark'] .cert-date.is-expired { color: #fbbf24; }
   .cert-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
   .cert-actions { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
   .cert-stale { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }

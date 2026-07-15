@@ -7,45 +7,31 @@
 
 export const experience = [
   {
-    phase: 'Infra & Ops',          // EDIT: nama fase (≤ ~12 karakter agar muat di kartu)
-    period: '[TAHUN–TAHUN]',       // EDIT: mis. "2016–2018"
-    title: '[JABATAN]',            // EDIT: jabatan/role saat itu
-    org: '[PERUSAHAAN]',           // EDIT
-    impact: '[Dampak / capaian utama dalam 1 kalimat]', // EDIT
+    phase: 'Cloud System Engineer',
+    period: 'Jul 2021 - Aug 2023',
+    title: 'System Engineer',
+    org: 'Xtremax · Bandung, West Java, Indonesia',
+    impact: 'Handled system administration and AWS-based infrastructure operations across production environments.',
   },
   {
-    phase: 'Cloud Arch',
-    period: '[TAHUN–TAHUN]',
-    title: '[JABATAN]',
-    org: '[PERUSAHAAN]',
-    impact: '[Dampak / capaian utama dalam 1 kalimat]',
+    phase: 'Cloud Infrastructure',
+    period: 'Sep 2023 - Nov 2024',
+    title: 'Infrastructure and Cloud Engineer',
+    org: 'AsiaQuest Indonesia · Jakarta, Indonesia (On-site)',
+    impact: 'Built and maintained Azure DevOps CI/CD pipelines and cloud infrastructure delivery workflows.',
   },
   {
-    phase: 'Fabric & Data',
-    period: '[TAHUN–TAHUN]',
-    title: '[JABATAN]',
-    org: '[PERUSAHAAN]',
-    impact: '[Dampak / capaian utama dalam 1 kalimat]',
-  },
-  {
-    phase: 'Security',
-    period: '[TAHUN–TAHUN]',
-    title: '[JABATAN]',
-    org: '[PERUSAHAAN]',
-    impact: '[Dampak / capaian utama dalam 1 kalimat]',
+    phase: 'Technology Strategist',
+    period: 'Nov 2024 - Apr 2025',
+    title: 'Partner Technology Strategist',
+    org: 'Microsoft · Jakarta, Indonesia (On-site)',
+    impact: 'Supported technical presales engagements and Azure solution positioning with partner and customer teams.',
   },
   {
     phase: 'Presales',
-    period: '[TAHUN–TAHUN]',
-    title: '[JABATAN]',
-    org: '[PERUSAHAAN]',
-    impact: '[Dampak / capaian utama dalam 1 kalimat]',
-  },
-  {
-    phase: 'Advisory',
-    period: '[TAHUN–SEKARANG]',
-    title: '[JABATAN]',
-    org: '[PERUSAHAAN]',
-    impact: '[Dampak / capaian utama dalam 1 kalimat]',
+    period: 'May 2025 - Present',
+    title: 'Presales Consultant',
+    org: 'Tech Data APAC · Jakarta, Indonesia (On-site)',
+    impact: 'Driving Azure-focused technical presales motions and translating customer requirements into executable solution plans.',
   },
 ];

@@ -28,7 +28,7 @@ export const expertise = [
   {
     title: 'DevOps / IaC',
     icon: 'ti-git-branch',
-    skills: ['Bicep / Terraform', 'GitHub Actions', 'Copilot', 'CI/CD'],
+    skills: ['Terraform', 'Azure DevOps', 'Copilot', 'CI/CD'],
   },
   {
     title: 'AI & Copilot',
