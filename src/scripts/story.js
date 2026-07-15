@@ -133,41 +133,56 @@ function initPipeline() {
   ScrollTrigger.matchMedia({
     '(min-width: 861px)': function () {
       const viewport = section.querySelector('[data-pipeline-viewport]');
+      const playhead = section.querySelector('[data-playhead]');
+      const playLabel = section.querySelector('[data-playhead-label]');
+      const END_PAD = 24;  // samakan dengan padding-inline .pipeline-track
+      const LEAD = 12;     // garis berhenti sedikit SEBELUM dot kartu aktif
 
-      // Jarak geser = posisi tengah kartu TERAKHIR relatif titik tengah viewport.
-      // Dihitung dari offsetLeft (tidak terpengaruh transform), bukan scrollWidth
-      // — supaya kartu terakhir (+ penanda "now"-nya) berhenti tepat di tengah.
+      // Jarak geser: sampai tepi kanan kartu terakhir sejajar tepi kanan viewport.
+      // Dihitung dari offsetLeft (tak terpengaruh transform), bukan scrollWidth
+      // — scrollWidth kerap mengabaikan padding-kanan pada flex container.
       const distance = () => {
         const last = stages[stages.length - 1];
         if (!last || !viewport) return 0;
-        return Math.max(0, last.offsetLeft + last.offsetWidth / 2 - viewport.clientWidth / 2);
+        return Math.max(0, last.offsetLeft + last.offsetWidth + END_PAD - viewport.clientWidth);
       };
 
-      // Titik tengah viewport = posisi baca (tak terlihat). Kartu terdekat
-      // dengannya = aktif; yang sudah lewat = passed.
-      const markActive = () => {
-        if (!viewport) return;
-        const box = viewport.getBoundingClientRect();
-        const mid = box.left + viewport.clientWidth / 2;
-        let best = null;
-        let bestDist = Infinity;
-        stages.forEach((s) => {
-          const r = s.getBoundingClientRect();
-          const d = Math.abs(r.left + r.width / 2 - mid);
-          if (d < bestDist) { bestDist = d; best = s; }
+      // Posisi dot kartu ke-i, relatif terhadap kiri viewport (ikut transform).
+      const dotX = (i) => {
+        const el = stages[i].querySelector('.stage-dot') || stages[i];
+        return el.getBoundingClientRect().left + el.offsetWidth / 2
+          - viewport.getBoundingClientRect().left;
+      };
+
+      // Sinkronkan playhead + label + status kartu dengan progress (0..1).
+      const sync = (p) => {
+        const n = stages.length;
+        if (!n) return;
+        const t = Math.min(Math.max(p, 0), 1);
+        const idx = t * (n - 1);
+        const i0 = Math.floor(idx);
+        const i1 = Math.min(i0 + 1, n - 1);
+        const x = dotX(i0) + (dotX(i1) - dotX(i0)) * (idx - i0);
+
+        if (playhead) playhead.style.transform = `translateX(${(x - LEAD).toFixed(1)}px)`;
+
+        const cur = Math.round(idx);
+        if (playLabel) playLabel.textContent = stages[cur].dataset.years || '';
+        stages.forEach((s, i) => {
+          s.classList.toggle('is-active', i === cur);
+          s.classList.toggle('is-passed', i < cur);
         });
-        stages.forEach((s) => {
-          const r = s.getBoundingClientRect();
-          const center = r.left + r.width / 2;
-          s.classList.toggle('is-active', s === best);
-          s.classList.toggle('is-passed', s !== best && center < mid);
-        });
+        if (progress) progress.style.width = (t * 100).toFixed(1) + '%';
       };
 
       const tween = gsap.to(track, {
         x: () => -distance(),
         ease: 'none',
+        // Pakai progress tween (bukan scroll) agar playhead tetap menempel
+        // pada kartu saat scrub masih melambat.
+        onUpdate: function () { sync(this.progress()); },
       });
+
       ScrollTrigger.create({
         animation: tween,
         trigger: section,
@@ -176,13 +191,9 @@ function initPipeline() {
         pin: true,
         scrub: 0.6,
         invalidateOnRefresh: true,
-        onRefresh: markActive,
-        onUpdate: (self) => {
-          if (progress) progress.style.width = (self.progress * 100).toFixed(1) + '%';
-          markActive();
-        },
+        onRefresh: () => sync(tween.progress()),
       });
-      markActive(); // status awal: kartu pertama aktif sebelum scroll
+      sync(0); // status awal sebelum scroll
     },
     '(max-width: 860px)': function () {
       revealStages();

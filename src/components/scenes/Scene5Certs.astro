@@ -1,12 +1,19 @@
 ---
 import { profile } from '../../data/profile.js';
-const { credly = [], msLearn = [], stale = false } = Astro.props;
+const {
+  accreditations = [],
+  accreditationsTotal = 0,
+  certifications = [],
+  appliedSkills = [],
+  stale = false,
+} = Astro.props;
+
 const hasTranscript = profile.msLearnTranscript && !profile.msLearnTranscript.startsWith('[');
 
 // Placeholder ('[...]') dan string kosong dianggap "tidak diisi".
 const filled = (v) => typeof v === 'string' && v.trim() !== '' && !v.startsWith('[');
 
-// 'YYYY-MM-DD' -> 'Mar 2025'. Kembalikan null bila tidak valid.
+// 'YYYY-MM-DD' -> 'Mar 2025'. null bila tidak valid.
 const fmt = (v) => {
   if (!filled(v)) return null;
   const d = new Date(v);
@@ -14,10 +21,10 @@ const fmt = (v) => {
   return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 };
 
-// Bangun baris meta: "Earned Mar 2025 · Expires Mar 2026" / "· No expiration".
+// "Earned Mar 2025 · Expires Mar 2026" / "· No expiration"
 function meta(c) {
   const parts = [];
-  const earned = fmt(c.earnedOn) || fmt(c.date); // c.date = kompat data lama
+  const earned = fmt(c.earnedOn) || fmt(c.date);
   if (earned) parts.push(`Earned ${earned}`);
 
   let expired = false;
@@ -28,48 +35,85 @@ function meta(c) {
       expired = !Number.isNaN(exp.getTime()) && exp.getTime() < Date.now();
       parts.push(`${expired ? 'Expired' : 'Expires'} ${expText}`);
     }
-  } else if (earned) {
+  } else if (earned && c.type !== 'applied-skill') {
     parts.push('No expiration');
   }
   return { text: parts.join(' · '), expired };
 }
 
-const all = [
-  ...credly.map((c) => ({ ...c, source: 'Credly' })),
-  ...msLearn.map((c) => ({ ...c, source: 'Microsoft Learn' })),
-].map((c) => ({ ...c, meta: meta(c) }));
+// Fallback ikon: 2 karakter pertama nama (mis. "AZ-305: ..." -> "AZ").
+const initials = (name = '') =>
+  (name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '••').toUpperCase();
+
+const href = (c) => (filled(c.url) ? c.url : null);
+
+const prep = (list) => list.map((c) => ({ ...c, meta: meta(c) }));
+
+const groups = [
+  {
+    id: 'accreditations',
+    title: 'Accreditations',
+    note:
+      accreditationsTotal > accreditations.length
+        ? `${accreditations.length} terbaru dari ${accreditationsTotal}`
+        : '',
+    items: prep(accreditations),
+  },
+  { id: 'certifications', title: 'Certifications', note: '', items: prep(certifications) },
+  { id: 'applied-skills', title: 'Applied Skills', note: '', items: prep(appliedSkills) },
+].filter((g) => g.items.length);
 ---
 <section id="certs" class="scene" data-scene="certs">
   <div class="blueprint-bg" aria-hidden="true"></div>
   <div class="container">
     <span class="eyebrow reveal">credentials minted</span>
-    <h2 class="scene-title reveal">Verified certifications.</h2>
+    <h2 class="scene-title reveal">Verified credentials.</h2>
     <p class="lead reveal" style="margin-top:16px">
       Fetched at build time — each badge links to its verification page.
     </p>
 
-    {all.length === 0 ? (
-      <p class="reveal" style="margin-top:24px;color:var(--text-muted);font-family:var(--font-mono);font-size:14px">
-        // isi username Credly di src/data/certs.js atau daftar Microsoft Learn untuk menampilkan sertifikat.
+    {groups.length === 0 ? (
+      <p class="reveal cert-empty">
+        // isi username Credly di src/data/certs.js, atau daftar Microsoft Learn, untuk menampilkan kredensial.
       </p>
     ) : (
-      <div class="cert-grid">
-        {all.map((c) => (
-          <a class="cert card reveal" href={c.url && !c.url.startsWith('[') ? c.url : '#'}
-             target={c.url && !c.url.startsWith('[') ? '_blank' : null}
-             rel="noopener noreferrer">
-            {c.image ? <img class="cert-img" src={c.image} alt="" width="56" height="56" loading="lazy" /> : <span class="cert-badge" aria-hidden="true">&#10003;</span>}
-            <div class="cert-body">
-              <span class="cert-name">{c.name}</span>
-              <span class="cert-meta">{c.issuer}</span>
-              {c.meta.text && (
-                <span class={`cert-date${c.meta.expired ? ' is-expired' : ''}`}>{c.meta.text}</span>
-              )}
-            </div>
-            <span class="cert-src">{c.source}</span>
-          </a>
-        ))}
-      </div>
+      groups.map((g) => (
+        <section class="cert-group" aria-labelledby={`cg-${g.id}`}>
+          <div class="cert-group-head reveal">
+            <h3 class="cert-group-title" id={`cg-${g.id}`}>{g.title}</h3>
+            <span class="cert-count">{g.items.length}</span>
+            {g.note && <span class="cert-note">{g.note}</span>}
+          </div>
+          <div class="cert-grid">
+            {g.items.map((c) => {
+              const link = href(c);
+              const Tag = link ? 'a' : 'div';
+              return (
+                <Tag
+                  class="cert card reveal"
+                  href={link}
+                  target={link ? '_blank' : null}
+                  rel={link ? 'noopener noreferrer' : null}
+                >
+                  {filled(c.image) ? (
+                    <img class="cert-img" src={c.image} alt="" width="48" height="48" loading="lazy" decoding="async" />
+                  ) : (
+                    <span class="cert-badge" aria-hidden="true">{initials(c.name)}</span>
+                  )}
+                  <div class="cert-body">
+                    <span class="cert-name">{c.name}</span>
+                    <span class="cert-meta">{c.issuer}</span>
+                    {c.meta.text && (
+                      <span class={`cert-date${c.meta.expired ? ' is-expired' : ''}`}>{c.meta.text}</span>
+                    )}
+                  </div>
+                  <span class="cert-src">{c.source}</span>
+                </Tag>
+              );
+            })}
+          </div>
+        </section>
+      ))
     )}
 
     <div class="cert-actions reveal">
@@ -88,12 +132,24 @@ const all = [
 </section>
 
 <style>
-  .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 34px; }
+  .cert-empty { margin-top: 24px; color: var(--text-muted); font-family: var(--font-mono); font-size: 14px; }
+
+  .cert-group { margin-top: 40px; }
+  .cert-group-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .cert-group-title { font-size: 1.1rem; font-family: var(--font-display); }
+  .cert-count {
+    font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px;
+  }
+  .cert-note { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); margin-left: auto; }
+
+  .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
   .cert { display: flex; align-items: center; gap: 14px; }
-  .cert-img { border-radius: 8px; flex: 0 0 auto; }
+  .cert-img { border-radius: 8px; flex: 0 0 auto; width: 48px; height: 48px; object-fit: contain; }
   .cert-badge {
     flex: 0 0 auto; width: 44px; height: 44px; border-radius: 10px;
-    display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 20px;
+    display: grid; place-items: center; background: var(--accent-soft); color: var(--accent);
+    font-family: var(--font-mono); font-size: 14px; font-weight: 700; letter-spacing: -0.02em;
   }
   .cert-body { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
   .cert-name { font-weight: 500; font-size: 15px; }
@@ -101,8 +157,10 @@ const all = [
   .cert-date { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted); }
   .cert-date.is-expired { color: #b45309; }
   :root[data-theme='dark'] .cert-date.is-expired { color: #fbbf24; }
-  .cert-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
-  .cert-actions { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+  .cert-src { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); align-self: flex-start; }
+
+  .cert-actions { display: flex; align-items: center; gap: 14px; margin-top: 30px; }
   .cert-stale { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+
   @media (max-width: 640px) { .cert-grid { grid-template-columns: 1fr; } }
 </style>

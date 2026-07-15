@@ -1,5 +1,15 @@
 ---
 import { experience } from '../../data/experience.js';
+
+// "Jul 2021 - Aug 2023" -> "2021–2023" ; "May 2025 - Present" -> "2025"
+const yearsOf = (period = '') => {
+  const ys = String(period).match(/\d{4}/g) || [];
+  if (!ys.length) return '';
+  const a = ys[0];
+  const b = ys[ys.length - 1];
+  return a === b ? a : `${a}–${b}`;
+};
+const lastIndex = experience.length - 1;
 ---
 <section id="pipeline" class="scene pipeline-scene" data-scene="pipeline">
   <div class="container pipeline-head">
@@ -9,12 +19,17 @@ import { experience } from '../../data/experience.js';
 
   <!-- Desktop: viewport dipin, track meluncur horizontal. Mobile: stack vertikal. -->
   <div class="pipeline-viewport" data-pipeline-viewport>
+    <div class="playhead" data-playhead aria-hidden="true">
+      <span class="playhead-label" data-playhead-label>{yearsOf(experience[0]?.period)}</span>
+    </div>
     <ol class="pipeline-track" data-pipeline-track>
       {experience.map((s, i) => (
-        <li class:list={['stage', 'card', i === experience.length - 1 && 'is-current']} data-stage data-index={i}>
-          {i === experience.length - 1 && (
-            <span class="now-marker" aria-hidden="true"><span class="now-label">now</span></span>
-          )}
+        <li
+          class:list={['stage', 'card', i === lastIndex && 'is-current']}
+          data-stage
+          data-index={i}
+          data-years={i === lastIndex ? 'now' : yearsOf(s.period)}
+        >
           <div class="stage-top">
             <span class="stage-dot" aria-hidden="true"></span>
             <span class="stage-phase">{s.phase}</span>
@@ -38,11 +53,7 @@ import { experience } from '../../data/experience.js';
   .pipeline-head { margin-bottom: 30px; }
   .pipeline-viewport { position: relative; }
   .pipeline-track {
-    list-style: none; display: flex; gap: 20px;
-    /* Padding agar kartu PERTAMA dan TERAKHIR bisa tepat di tengah viewport.
-       160px = separuh lebar kartu (.stage flex-basis 320px).
-       Kalau lebar kartu diubah, sesuaikan angka ini. */
-    padding-inline: calc(50% - 160px);
+    list-style: none; display: flex; gap: 20px; padding-inline: 24px;
     will-change: transform;
   }
   .stage {
@@ -60,17 +71,18 @@ import { experience } from '../../data/experience.js';
   .stage-org { color: var(--text-secondary); font-size: 14.5px; }
   .stage-impact { color: var(--text-secondary); font-size: 14px; margin-top: 6px; }
 
-  /* Penanda "now" menempel pada kartu jabatan TERAKHIR (bergerak bersama track),
-     bukan garis diam di tengah layar — supaya "now" benar-benar berarti posisi
-     Anda saat ini, bukan sekadar titik baca. */
-  .now-marker {
-    position: absolute; top: -12px; bottom: -12px; left: 50%; width: 0;
+  /* Playhead: garis yang BERGERAK mengikuti progress scroll, berhenti tepat
+     sebelum dot kartu yang sedang aktif. Labelnya membaca tahun kartu aktif,
+     dan menjadi "now" saat tiba di jabatan terakhir. */
+  .playhead {
+    position: absolute; top: -12px; bottom: -12px; left: 0; width: 0;
     border-left: 1.5px dashed color-mix(in srgb, var(--accent) 55%, transparent);
-    z-index: 2; pointer-events: none;
+    z-index: 2; pointer-events: none; will-change: transform;
   }
-  .now-label {
+  .playhead-label {
     position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
     font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    white-space: nowrap;
   }
   .stage.is-current { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
 
@@ -85,7 +97,7 @@ import { experience } from '../../data/experience.js';
       transform: none !important; will-change: auto;
     }
     .stage { flex: 1 1 auto; }
-    .now-marker { display: none; }
+    .playhead { display: none; }
     .pipeline-rail { display: none; }
   }
 </style>
