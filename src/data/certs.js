@@ -106,7 +106,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: Azure Solutions Architect Expert', // EDIT
     issuer: 'Microsoft',
-    image: '/assets/microsoft-certified-azure-solutions-architect-expert-badge.svg', // EDIT (opsional): '/certs/nama.png'
+    image: '/assets/microsoft-certified-expert-badge.svg', // EDIT (opsional): '/certs/nama.png'
     earnedOn: '2026-05-26',                            // EDIT
     expiresOn: '2027-05-27',                           // EDIT (atau '' bila tidak expire)
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/7EBEF9896EC2B816?sharingId=1A0384713C1DC829',
@@ -114,7 +114,7 @@ export const msLearnCerts = [
   {
     name: 'Microsoft Certified: DevOps Engineer Expert',
     issuer: 'Microsoft',
-    image: '/assets/microsoft-certified-devops-engineer-expert-badge.svg',
+    image: '/assets/microsoft-certified-expert-badge.svg',
     earnedOn: '2026-05-26',
     expiresOn: '2027-05-27',
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/BAC3BAA3CF4A0314?sharingId=1A0384713C1DC829',
