@@ -8,7 +8,7 @@ export const profile = {
   // --- Identitas dasar -------------------------------------------------------
   fullName: 'Bagus Juliyanto',            // EDIT: mis. "Bagus Prasetyo"
   role: 'Presales Consultant',      // EDIT: peran utama
-  roleSecondary: 'Solution Architect', // EDIT: peran kedua (opsional)
+  //roleSecondary: 'Infrastructure Engineer', // EDIT: peran kedua (opsional)
   tagline: 'Designing secure, scalable, and business-driven cloud solutions.', // EDIT
   location: 'Jakarta, Indonesia',          // EDIT: mis. "Jakarta, Indonesia"
   available: true,                        // true = tampilkan badge "available"
@@ -17,14 +17,6 @@ export const profile = {
   // Ringkasan (dipakai di Scene 1 / About)
   summary:
     'I help organizations design, modernize, secure, and optimize their cloud and hybrid infrastructure — turning technical complexity into measurable business outcomes.', // EDIT
-
-  // Deskripsi khusus untuk SEO & pratinjau share. Idealnya <= 125 karakter —
-  // Google memotong di ~155, dan kartu sosial di ~125 (lebih pendek di mobile).
-  // Kosongkan '' untuk memakai summary di atas (mungkin akan terpotong).
-  metaDescription: 'Azure cloud architect & presales consultant. I turn technical complexity into measurable business outcomes.', // EDIT
-
-  // Nama situs untuk kartu share (Discord/Slack menampilkannya di atas judul).
-  siteName: 'Bagus Juliyanto Resume', // EDIT — biasanya nama Anda atau nama brand
 
   // --- Kontak ----------------------------------------------------------------
   email: 'bagus.juliyanto@outlook.com',                      // EDIT: mis. "you@domain.com"
@@ -35,7 +27,7 @@ export const profile = {
   // --- SEO / domain ----------------------------------------------------------
   domain: 'https://www.bagusjuliyanto.cloud',     // EDIT: domain final (tanpa trailing slash)
   ogImage: '/assets/b-cover.png',       // EDIT: taruh gambar 1200x630 di public/assets/
-  cvFile: '/assets/CV-[NAMA].pdf',       // EDIT: taruh PDF CV di public/assets/
+  cvFile: '/assets/CV-Bagus-Juliyanto.pdf',       // EDIT: taruh PDF CV di public/assets/
 
   // --- Verifikasi sertifikat via Microsoft Learn -----------------------------
   // Shareable transcript link (Microsoft Learn > Certifications > Share).

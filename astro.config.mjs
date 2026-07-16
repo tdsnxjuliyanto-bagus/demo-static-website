@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 
 // EDIT: ganti dengan domain final Anda (dipakai untuk sitemap / canonical / OG url).
-const SITE_URL = 'https://YOUR-DOMAIN.com';
+const SITE_URL = 'https://www.bagusjuliyanto.cloud';
 
 export default defineConfig({
   site: SITE_URL,
