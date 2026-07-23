@@ -33,6 +33,24 @@ jobs:
           submodules: true
           lfs: false
 
+      # Gagal lebih awal dengan pesan jelas bila secret tidak terbaca.
+      # Azure hanya bilang "deployment_token was not provided", yang tidak
+      # menjelaskan APAKAH secret-nya salah nama, salah tab, atau belum dibuat.
+      # Mencetak PANJANG token aman — nilainya sendiri tidak pernah ditampilkan.
+      - name: Verify deployment token
+        env:
+          TOKEN: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::Secret AZURE_STATIC_WEB_APPS_API_TOKEN kosong atau tidak ada."
+            echo "Periksa: Settings > Secrets and variables > Actions"
+            echo "  - harus di tab SECRETS (bukan Variables)"
+            echo "  - harus Repository secret (bukan Environment secret)"
+            echo "  - nama persis: AZURE_STATIC_WEB_APPS_API_TOKEN"
+            exit 1
+          fi
+          echo "Token terbaca (panjang ${#TOKEN} karakter)."
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -44,7 +62,7 @@ jobs:
           # Nama secret ini dibuat otomatis oleh Azure saat SWA disambungkan ke
           # repo. Jangan diganti kecuali Anda juga menggantinya di GitHub
           # Settings > Secrets and variables > Actions.
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_OCEAN_04CF2D910 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
           app_location: '/'        # root repo (Astro)
@@ -59,5 +77,5 @@ jobs:
       - name: Close Pull Request
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_HAPPY_OCEAN_04CF2D910 }}
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: 'close'
