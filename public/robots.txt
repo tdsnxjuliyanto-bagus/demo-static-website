@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
-Sitemap: https://YOUR-DOMAIN.com/sitemap.xml
+
+# @astrojs/sitemap menghasilkan sitemap-index.xml (BUKAN sitemap.xml).
+# Kalau integration sitemap dilepas dari astro.config.mjs, hapus baris ini juga
+# — menjanjikan sitemap yang tidak ada bikin crawler mencatat error.
+Sitemap: https://www.bagusjuliyanto.cloud/sitemap-index.xml

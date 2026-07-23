@@ -3,7 +3,7 @@
   "trailingSlash": "auto",
   "navigationFallback": {
     "rewrite": "/404.html",
-    "exclude": ["/assets/*", "/fonts/*", "/certs/*", "/api/*", "*.{css,js,svg,png,jpg,jpeg,webp,woff,woff2,ico,pdf,json}"]
+    "exclude": ["/assets/*", "/fonts/*", "/certs/*", "/api/*", "*.{css,js,svg,png,jpg,jpeg,webp,woff,woff2,ico,pdf,json,xml,txt,map}"]
   },
   "routes": [
     {
