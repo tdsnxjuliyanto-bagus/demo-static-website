@@ -1,19 +1,42 @@
 ---
-import { projects, projectFilters } from '../../data/projects.js';
+import { projectFilters } from '../../data/projects.js';
+
+const { projects = [], stale = false } = Astro.props;
+
+// Kalau tidak ada satu pun proyek, JANGAN render section-nya.
+// Nav mengundang orang klik "Work"; menyajikan grid kosong lebih buruk
+// daripada tidak menawarkan sama sekali.
+const hasProjects = projects.length > 0;
+
+// Filter hanya menampilkan kategori yang benar-benar terpakai (+ 'All'),
+// supaya tidak ada chip yang menghasilkan grid kosong saat diklik.
+const usedTags = new Set(projects.map((p) => p.tag));
+const filters = projectFilters.filter((f, i) => i === 0 || usedTags.has(f));
+
+const fmtDate = (v) => {
+  if (!v) return '';
+  const d = new Date(v);
+  return Number.isNaN(d.getTime())
+    ? ''
+    : d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+};
 ---
+{hasProjects && (
 <section id="projects" class="scene" data-scene="projects">
   <div class="container">
     <span class="eyebrow reveal">services deployed</span>
     <h2 class="scene-title reveal">Selected work.</h2>
     <p class="lead reveal" style="margin-top:16px">
-      Case studies and demos — each one spun up like a service coming online.
+      Pulled from public repositories — every card links to the source.
     </p>
 
-    <div class="filters reveal" role="group" aria-label="Filter projects" data-filters>
-      {projectFilters.map((f, i) => (
-        <button type="button" class={`filter-chip${i === 0 ? ' is-active' : ''}`} data-filter={f}>{f}</button>
-      ))}
-    </div>
+    {filters.length > 1 && (
+      <div class="filters reveal" role="group" aria-label="Filter projects" data-filters>
+        {filters.map((f, i) => (
+          <button type="button" class={`filter-chip${i === 0 ? ' is-active' : ''}`} data-filter={f}>{f}</button>
+        ))}
+      </div>
+    )}
 
     <div class="proj-grid" data-proj-grid>
       {projects.map((p) => (
@@ -21,22 +44,33 @@ import { projects, projectFilters } from '../../data/projects.js';
           <div class="proj-head">
             <span class="proj-status" aria-hidden="true"></span>
             <span class="proj-tag">{p.tag}</span>
+            {p.updatedOn && <span class="proj-updated">updated {fmtDate(p.updatedOn)}</span>}
           </div>
           <h3 class="proj-title">{p.title}</h3>
-          <p class="proj-sum">{p.summary}</p>
+          {p.summary
+            ? <p class="proj-sum">{p.summary}</p>
+            : <p class="proj-sum proj-sum-empty">// tambahkan description di repo GitHub agar muncul di sini</p>}
           <div class="proj-stack">
-            {p.stack.map((s) => <span class="mono-tag">{s}</span>)}
+            {(p.stack || []).map((s) => <span class="mono-tag">{s}</span>)}
           </div>
           {p.link && (
-            <a class="proj-link" href={p.link} target="_blank" rel="noopener noreferrer">View details &rarr;</a>
+            <a class="proj-link" href={p.link} target="_blank" rel="noopener noreferrer">View source &rarr;</a>
           )}
         </article>
       ))}
     </div>
+
+    {stale && (
+      <p class="proj-stale reveal">showing cached list</p>
+    )}
   </div>
 </section>
+)}
 
 <style>
+  .proj-updated { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); }
+  .proj-sum-empty { color: var(--text-muted); font-family: var(--font-mono); font-size: 13px; }
+  .proj-stale { margin-top: 20px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 22px; }
   .filter-chip {
     font-family: var(--font-mono); font-size: 13px; padding: 7px 14px; border-radius: 999px;

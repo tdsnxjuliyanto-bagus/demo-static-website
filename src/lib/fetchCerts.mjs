@@ -10,6 +10,7 @@
 import {
   credlyUser,
   credlyFeatured,
+  accreditationsPinned,
   VISIBLE_LIMITS,
   COLLAPSE_MIN,
   accreditationsFallback,
@@ -134,8 +135,27 @@ export async function getCertifications() {
 
   const ofType = (t) => clean(credly.filter((c) => c.type === t));
 
-  // 1) Akreditasi: Credly saja.
-  const accreditations = ofType('accreditation').sort(byNewest);
+  // 1) Akreditasi: Credly saja. Yang disematkan naik ke atas (sesuai urutan
+  //    penulisan), sisanya menyusul terbaru dulu.
+  const pinOrder = (accreditationsPinned || []).filter(Boolean).map(norm);
+  const rankOf = (c) => {
+    const i = pinOrder.indexOf(norm(c.name));
+    return i === -1 ? Infinity : i;
+  };
+  const accreditations = ofType('accreditation').sort((a, b) => {
+    const ra = rankOf(a);
+    const rb = rankOf(b);
+    if (ra !== rb) return ra - rb;   // yang disematkan duluan
+    return byNewest(a, b);           // sisanya terbaru dulu
+  });
+
+  // Peringatan bila nama sematan tidak cocok dengan badge mana pun.
+  const accNames = new Set(ofType('accreditation').map((c) => norm(c.name)));
+  (accreditationsPinned || []).filter(Boolean).forEach((pin) => {
+    if (!accNames.has(norm(pin))) {
+      console.warn(`[fetchCerts] accreditationsPinned tidak cocok: "${pin}"`);
+    }
+  });
 
   // 2) Sertifikasi: Credly + Microsoft Learn.
   const certifications = [

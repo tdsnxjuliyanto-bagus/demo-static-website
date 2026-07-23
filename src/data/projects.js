@@ -1,53 +1,61 @@
 // ============================================================================
 //  PROJECTS / CASE STUDIES  —  Scene 4 "Services Deployed"
-//  Untuk profil presales, ini lebih tepat berupa STUDI KASUS/DEMO daripada
-//  repo. Field "tags" dipakai untuk filter. EDIT bebas.
+//
+//  Kartu diambil OTOMATIS dari repo GitHub publik saat build
+//  (lihat src/lib/fetchProjects.mjs), supaya setiap kartu bisa ditelusuri
+//  ke kode aslinya — bukan klaim yang tak terverifikasi.
+//
+//  PRASYARAT agar hasilnya bagus:
+//    - Repo harus PUBLIK (repo privat tidak akan muncul).
+//    - Isi "About" / description repo dengan 1 kalimat: masalah + hasil.
+//      Description inilah yang jadi ringkasan di kartu.
+//    - Tambahkan Topics di repo (mis. azure, fabric, security) — dipakai
+//      untuk menentukan kategori filter & daftar "stack".
 // ============================================================================
 
-export const projects = [
-  {
-    title: '[Judul Studi Kasus 1]',     // EDIT
-    tag: 'Data',                          // kategori untuk filter (Data/Security/Infra/AI)
-    summary: '[Ringkasan 1–2 kalimat: masalah, solusi, hasil.]', // EDIT
-    stack: ['Microsoft Fabric', 'Power BI'], // EDIT: teknologi utama
-    link: '',                             // opsional: URL detail; kosong = tanpa link
-  },
-  {
-    title: '[Judul Studi Kasus 2]',
-    tag: 'Security',
-    summary: '[Ringkasan 1–2 kalimat.]',
-    stack: ['Defender for Storage', 'Azure Policy'],
-    link: '',
-  },
-  {
-    title: '[Judul Studi Kasus 3]',
-    tag: 'Infra',
-    summary: '[Ringkasan 1–2 kalimat.]',
-    stack: ['AKS', 'Bicep'],
-    link: '',
-  },
-  {
-    title: '[Judul Studi Kasus 4]',
-    tag: 'AI',
-    summary: '[Ringkasan 1–2 kalimat.]',
-    stack: ['Copilot Studio', 'Azure OpenAI'],
-    link: '',
-  },
-  {
-    title: '[Judul Studi Kasus 5]',
-    tag: 'Data',
-    summary: '[Ringkasan 1–2 kalimat.]',
-    stack: ['Synapse', 'Data Factory'],
-    link: '',
-  },
-  {
-    title: '[Judul Studi Kasus 6]',
-    tag: 'Infra',
-    summary: '[Ringkasan 1–2 kalimat.]',
-    stack: ['Azure VM', 'AVD'],
-    link: '',
-  },
+// EDIT: username GitHub Anda. Kosongkan '' untuk mematikan fetch.
+export const githubUser = 'bagusj06';
+
+// ---------------------------------------------------------------------------
+//  Repo mana yang ditampilkan (kurasi manual, urutan = urutan tampil).
+//  Kosongkan ([]) untuk memakai semua repo publik bertopik 'portfolio'.
+//
+//  Tulis nama repo persis seperti di GitHub (huruf besar/kecil bebas).
+// ---------------------------------------------------------------------------
+export const featuredRepos = [
+  // 'fabric-medallion-demo',
+  // 'defender-storage-malware-lab',
+  // 'powerbi-embedded-rls-demo',
 ];
 
-// Daftar filter yang tampil sebagai chip (urutan bebas). "All" wajib pertama.
+// Pemetaan manual: nama repo -> kategori filter. Paling kuat, mengalahkan topics.
+export const repoTagMap = {
+  // 'fabric-medallion-demo': 'Data',
+};
+
+// Kalau repo tidak ada di repoTagMap, kategorinya ditebak dari Topics repo.
+// EDIT: sesuaikan dengan topics yang benar-benar Anda pakai di GitHub.
+export const tagFromTopics = {
+  Data: ['data', 'fabric', 'powerbi', 'power-bi', 'synapse', 'analytics', 'etl'],
+  Security: ['security', 'defender', 'entra', 'governance', 'compliance'],
+  AI: ['ai', 'openai', 'copilot', 'llm', 'rag'],
+  Infra: ['azure', 'terraform', 'bicep', 'kubernetes', 'aks', 'iac', 'devops'],
+};
+
+// Chip filter di Scene 4. 'All' harus tetap pertama.
 export const projectFilters = ['All', 'Data', 'Security', 'Infra', 'AI'];
+
+// ---------------------------------------------------------------------------
+//  Cadangan bila fetch GitHub gagal saat build (rate limit / jaringan).
+//  Boleh dibiarkan kosong — kalau kosong dan fetch gagal, Scene 4 otomatis
+//  menyembunyikan diri daripada menampilkan kartu placeholder.
+// ---------------------------------------------------------------------------
+export const projects = [
+  // {
+  //   title: 'fabric-medallion-demo',
+  //   tag: 'Data',
+  //   summary: 'End-to-end Fabric demo: Bronze/Silver/Gold + semantic model.',
+  //   stack: ['Python', 'fabric', 'powerbi'],
+  //   link: 'https://github.com/bagusj06/fabric-medallion-demo',
+  // },
+];

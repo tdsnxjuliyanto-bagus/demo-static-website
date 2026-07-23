@@ -1,5 +1,9 @@
 ---
-import { profile, stats, services } from '../../data/profile.js';
+import { profile, stats as fallbackStats, services } from '../../data/profile.js';
+
+// stats dihitung di index.astro (resolveStats). Fallback ke data mentah bila
+// komponen dipakai tanpa props.
+const { stats = fallbackStats } = Astro.props;
 ---
 <section id="about" class="scene" data-scene="about">
   <div class="container">

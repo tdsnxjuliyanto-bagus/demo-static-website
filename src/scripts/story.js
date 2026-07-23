@@ -248,6 +248,33 @@ function initCertToggles() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* 7b. Tombol "Request my CV" -> isi form kontak & fokus ke field kosong      */
+/* -------------------------------------------------------------------------- */
+function initCvRequest() {
+  const btn = document.querySelector('[data-cv-request]');
+  if (!btn) return;
+  const subject = document.getElementById('cf-subject');
+  const message = document.getElementById('cf-message');
+
+  btn.addEventListener('click', () => {
+    // href="#console" tetap menangani scroll -> tidak perlu preventDefault,
+    // jadi tanpa JS pun tombolnya masih membawa orang ke form.
+    if (subject && !subject.value) subject.value = 'CV Request';
+    if (message && !message.value) {
+      message.value =
+        'Hi Bagus, I would like to request your CV.\n\nCompany:\nRole / opportunity:\n';
+    }
+    // Fokus ke field pertama yang masih kosong, setelah scroll selesai.
+    setTimeout(() => {
+      const name = document.getElementById('cf-name');
+      const email = document.getElementById('cf-email');
+      const target = [name, email].find((el) => el && !el.value);
+      if (target) target.focus({ preventScroll: true });
+    }, 600);
+  });
+}
+
+/* -------------------------------------------------------------------------- */
 /* 8. Scene 6: contact form -> POST /api/contact (fallback mailto)            */
 /* -------------------------------------------------------------------------- */
 function initContact() {
@@ -308,6 +335,7 @@ function boot() {
   initPipeline();
   initFilters();
   initCertToggles();
+  initCvRequest();
   initContact();
   ScrollTrigger.refresh();
 }

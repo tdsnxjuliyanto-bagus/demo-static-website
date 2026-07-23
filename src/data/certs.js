@@ -35,6 +35,26 @@ export const credlyFeatured = [
   // 'Azure Infrastructure Accreditation',
 ];
 
+// ---------------------------------------------------------------------------
+//  AKREDITASI YANG DISEMATKAN KE ATAS
+//
+//  Urutan default kelompok Accreditations adalah "terbaru dulu" — dan itu
+//  sering merugikan: badge training vendor yang baru diambil menggeser
+//  akreditasi partner yang jauh lebih bernilai ke balik tombol.
+//
+//  Nama yang ditulis di sini SELALU tampil di urutan teratas, sesuai urutan
+//  penulisan. Sisanya menyusul di bawahnya, tetap terbaru dulu.
+//  Pencocokan toleran terhadap beda kapital/spasi/jenis dash.
+// ---------------------------------------------------------------------------
+
+export const accreditationsPinned = [
+  'GitLab Solutions Architect Core Verified Associate',
+  'AWS Partner: Technical Accredited - Training Badge',
+  'AWS Partner: Accreditation (Business)',
+  'AvePoint Certified Technical Associate - AvePoint Elements',
+  'Professional Sales Accreditation for Partners',
+];
+
 export const COLLAPSE_MIN = {
   accreditation: 4,
   certification: 4,
@@ -132,6 +152,14 @@ export const msLearnCerts = [
      earnedOn: '2025-01-18',
      expiresOn: '',            // -> "No expiration"
      url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/864F0F9BC5A22009?sharingId=1A0384713C1DC829',
+  },
+  {
+     name: 'Microsoft Certified: Data Fundamentals',
+     issuer: 'Microsoft',
+     image: '/assets/microsoft-certified-fundamentals-badge.svg',
+     earnedOn: '2026-07-17',
+     expiresOn: '',            // -> "No expiration"
+     url: 'https://learn.microsoft.com/api/credentials/share/en-us/BagusJuliyanto-0113/2E2AC0F300B827F8?sharingId=1A0384713C1DC829',
   },
 ];
 

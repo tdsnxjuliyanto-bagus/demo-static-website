@@ -20,7 +20,11 @@ const chips = ['Cloud Architecture', 'Hybrid Infrastructure', 'Infrastructure as
       </div>
       <div class="hero-cta" data-hero-el>
         <a class="btn btn-primary" href="#projects">View my work</a>
-        <a class="btn btn-ghost" href={profile.cvFile} download>Download CV</a>
+        {profile.cvRequest !== false ? (
+          <a class="btn btn-ghost" href="#console" data-cv-request>Request my CV</a>
+        ) : (
+          <a class="btn btn-ghost" href={profile.cvFile} download>Download CV</a>
+        )}
       </div>
     </div>
   </div>
