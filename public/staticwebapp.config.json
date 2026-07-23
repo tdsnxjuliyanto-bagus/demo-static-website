@@ -1,10 +1,7 @@
 {
   "$schema": "https://json.schemas.azure.com/static-web-apps/staticwebapp.config.json",
   "trailingSlash": "auto",
-  "navigationFallback": {
-    "rewrite": "/404.html",
-    "exclude": ["/assets/*", "/fonts/*", "/certs/*", "/api/*", "*.{css,js,svg,png,jpg,jpeg,webp,woff,woff2,ico,pdf,json,xml,txt,map}"]
-  },
+  "_comment_navigationFallback": "SENGAJA TIDAK DIPAKAI. navigationFallback ditujukan untuk SPA (semua path dilempar ke satu index.html) dan SELALU menjawab 200 — jadi URL yang tidak ada seperti /test ikut 200 (soft 404), yang dicatat crawler sebagai error. Situs ini statis multi-file: Astro menghasilkan file asli per rute, dan responseOverrides di bawah sudah menangani rute tak dikenal dengan status 404 yang benar.",
   "routes": [
     {
       "route": "/api/*",
